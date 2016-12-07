@@ -18,6 +18,7 @@ import java.net.UnknownHostException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
 /**
@@ -57,10 +58,14 @@ public class TillTouchClient {
             g.setVisible(true);
             g.login();
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Error connecting to server " + SERVER_ADDRESS + " on port " + PORT + ".", "Error", JOptionPane.ERROR_MESSAGE);
-            initialSetup();
-            saveProperties();
-            start();
+            int opt = JOptionPane.showOptionDialog(null, "Error connecting to server " + SERVER_ADDRESS + " on port " + PORT + "\nTry again?", "Connection Error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, new javax.swing.ImageIcon(getClass().getResource("/io/github/davidg95/Till/resources/tillIcon.png")), null, null);
+            if (opt == JOptionPane.YES_OPTION) {
+                initialSetup();
+                saveProperties();
+                start();
+            } else {
+                System.exit(0);
+            }
         }
     }
 
