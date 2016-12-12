@@ -16,6 +16,7 @@ import io.github.davidg95.Till.till.Staff;
 import io.github.davidg95.Till.till.StaffNotFoundException;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class GUI extends javax.swing.JFrame {
     private Sale sale;
     private final DefaultTableModel model;
 
-    private CardLayout cards;
+    private final CardLayout cards;
 
     /**
      * Creates new form GUI
@@ -92,7 +93,7 @@ public class GUI extends javax.swing.JFrame {
 
     public void login() {
         try {
-            String staffID = JOptionPane.showInputDialog(this, "Enter staff ID", "Log On", JOptionPane.PLAIN_MESSAGE);
+            int staffID = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter staff ID", "Log On", JOptionPane.PLAIN_MESSAGE));
             staff = sc.tillLogin(staffID);
             lblStaff.setText(staff.getName());
             return;
@@ -100,11 +101,12 @@ public class GUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, ex, "Logon Error", JOptionPane.ERROR_MESSAGE);
         }
         login();
+//        staff = LoginDialog.showDialog(this);
     }
 
     public void logout() {
         try {
-            sc.tillLogout(staff.getId() + "");
+            sc.tillLogout(staff.getId());
             lblStaff.setText("Not Logged In");
             staff = null;
         } catch (IOException | StaffNotFoundException ex) {
@@ -125,6 +127,7 @@ public class GUI extends javax.swing.JFrame {
 
         });
         JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(5,10));
 
         List<Product> products;
         try {
@@ -397,6 +400,7 @@ public class GUI extends javax.swing.JFrame {
         lblItems.setText("Items: 0");
 
         panelCategories.setPreferredSize(new java.awt.Dimension(686, 120));
+        panelCategories.setLayout(new java.awt.GridLayout(2, 5));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -442,16 +446,14 @@ public class GUI extends javax.swing.JFrame {
                             .addComponent(lblItems, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(panelNumberEntry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnComplete, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnLogOut, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnLogOut, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         pack();
