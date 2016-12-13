@@ -117,7 +117,9 @@ public class GUI extends javax.swing.JFrame {
 
     public void addCategoryButton(Category c) {
         JButton cButton = new JButton(c.getName());
-        cButton.setBackground(new Color(c.getColorValue()));
+        if (c.getColorValue() != 0) {
+            cButton.setBackground(new Color(c.getColorValue()));
+        }
         cButton.setSize(140, 50);
         cButton.addActionListener(new ActionListener() {
             @Override
@@ -127,14 +129,16 @@ public class GUI extends javax.swing.JFrame {
 
         });
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(5,10));
+        panel.setLayout(new GridLayout(5, 10));
 
         List<Product> products;
         try {
             products = sc.getProductButtons(c.getID());
             for (Product p : products) {
                 JButton pButton = new JButton(p.getShortName());
-                pButton.setBackground(new Color(p.getColorValue()));
+                if (p.getColorValue() != 0) {
+                    pButton.setBackground(new Color(p.getColorValue()));
+                }
                 pButton.setSize(140, 50);
                 pButton.addActionListener(new ActionListener() {
                     @Override
