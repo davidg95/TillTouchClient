@@ -172,10 +172,6 @@ public class GUI extends javax.swing.JFrame {
         }
     }
 
-    public void addProductButton(Category c, Product p) {
-
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -479,6 +475,11 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLogOutActionPerformed
 
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
+        try {
+            sc.tillLogout(staff.getId());
+        } catch (IOException | StaffNotFoundException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
         sc.close();
         System.exit(0);
     }//GEN-LAST:event_btnExitActionPerformed
