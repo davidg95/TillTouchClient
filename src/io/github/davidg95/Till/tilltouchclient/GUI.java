@@ -54,6 +54,7 @@ public class GUI extends javax.swing.JFrame {
         lblHost.setText(TillTouchClient.HOST_NAME);
         cards = (CardLayout) panelMain.getLayout();
         newSale();
+        ClockThread.setClockLabel(lblTime);
     }
 
     public void setButtons() {
@@ -93,7 +94,7 @@ public class GUI extends javax.swing.JFrame {
 
     public void login() {
         try {
-            int staffID = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter staff ID", "Log On", JOptionPane.PLAIN_MESSAGE));
+            int staffID = (int) NumberEntry.showNumberEntryDialog(this, "Enter Logon ID");
             staff = sc.tillLogin(staffID);
             lblStaff.setText(staff.getName());
             return;
@@ -143,10 +144,21 @@ public class GUI extends javax.swing.JFrame {
                 pButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        sale.addItem(p);
-                        setTotalLabel(sale.getTotal());
-                        setItemsLabel(sale.getItemCount());
-                        addToList(p);
+                        if (p.isOpen()) {
+                            double price = NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100;
+                            if (price > 0) {
+                                p.setPrice(price);
+                                sale.addItem(p);
+                                setTotalLabel(sale.getTotal());
+                                setItemsLabel(sale.getItemCount());
+                                addToList(p);
+                            }
+                        } else {
+                            sale.addItem(p);
+                            setTotalLabel(sale.getTotal());
+                            setItemsLabel(sale.getItemCount());
+                            addToList(p);
+                        }
                     }
 
                 });
@@ -420,7 +432,7 @@ public class GUI extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(panelMain, javax.swing.GroupLayout.PREFERRED_SIZE, 704, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 4, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnComplete, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -428,8 +440,7 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(lblItems, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lblTotal)
                         .addComponent(panelNumberEntry, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))))
             .addComponent(topPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
