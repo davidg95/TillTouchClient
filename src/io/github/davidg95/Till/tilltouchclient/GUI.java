@@ -16,15 +16,18 @@ import io.github.davidg95.Till.till.Staff;
 import io.github.davidg95.Till.till.StaffNotFoundException;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
@@ -55,6 +58,7 @@ public class GUI extends javax.swing.JFrame {
         cards = (CardLayout) panelMain.getLayout();
         newSale();
         ClockThread.setClockLabel(lblTime);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     public void setButtons() {
@@ -76,7 +80,17 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void addToList(Product p) {
-        Object[] s = new Object[]{p.getShortName(), p.getPrice()};
+        double price = p.getPrice();
+        Object[] s;
+        if (price > 1) {
+            DecimalFormat df = new DecimalFormat("#.00"); // Set your desired format here.
+            System.out.println(df.format(price));
+            s = new Object[]{p.getShortName(), "£" + df.format(price)};
+        } else {
+            DecimalFormat df = new DecimalFormat("0.00"); // Set your desired format here.
+            System.out.println(df.format(price));
+            s = new Object[]{p.getShortName(), "£" + df.format(price)};
+        }
         model.addRow(s);
     }
 
@@ -85,7 +99,15 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void setTotalLabel(double val) {
-        lblTotal.setText("Total: £" + val);
+        if (val > 1) {
+            DecimalFormat df = new DecimalFormat("#.00"); // Set your desired format here.
+            System.out.println(df.format(val));
+            lblTotal.setText("Total: £" + df.format(val));
+        } else {
+            DecimalFormat df = new DecimalFormat("0.00"); // Set your desired format here.
+            System.out.println(df.format(val));
+            lblTotal.setText("Total: £" + df.format(val));
+        }
     }
 
     private void setItemsLabel(int val) {
@@ -212,6 +234,7 @@ public class GUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("JTill Terminal");
+        setAlwaysOnTop(true);
         setIconImage(TillTouchClient.getIcon());
 
         jButton1.setText("1");
@@ -342,12 +365,16 @@ public class GUI extends javax.swing.JFrame {
 
         panelMain.setLayout(new java.awt.CardLayout());
 
+        lblVerison.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         lblVerison.setText("V0.1B");
 
-        lblHost.setText("SITE NAME HERE");
+        lblHost.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        lblHost.setText("TERMINAL NAME HERE");
 
-        lblTime.setText("TIME HERE");
+        lblTime.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        lblTime.setText("00:00");
 
+        lblStaff.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         lblStaff.setText("STAFF NAME HERE");
 
         javax.swing.GroupLayout topPanelLayout = new javax.swing.GroupLayout(topPanel);
@@ -422,13 +449,11 @@ public class GUI extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelCategories, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnLogOut, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(panelMain, javax.swing.GroupLayout.PREFERRED_SIZE, 704, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(btnLogOut, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 460, Short.MAX_VALUE))
+                    .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnComplete, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -457,14 +482,11 @@ public class GUI extends javax.swing.JFrame {
                             .addComponent(lblItems, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(panelNumberEntry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnComplete, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnLogOut, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnLogOut, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnComplete, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         pack();
