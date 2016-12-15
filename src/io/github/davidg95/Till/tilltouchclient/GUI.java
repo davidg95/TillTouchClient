@@ -16,7 +16,6 @@ import io.github.davidg95.Till.till.Staff;
 import io.github.davidg95.Till.till.StaffNotFoundException;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -64,8 +63,13 @@ public class GUI extends javax.swing.JFrame {
     public void setButtons() {
         try {
             List<Category> categorys = sc.getCategoryButtons();
+            panelCategories.setLayout(new GridLayout(2, 5));
             for (Category c : categorys) {
                 addCategoryButton(c);
+            }
+
+            for (int i = categorys.size() - 1; i < 10; i++) {
+                panelCategories.add(new JPanel());
             }
         } catch (IOException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -152,7 +156,7 @@ public class GUI extends javax.swing.JFrame {
 
         });
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(5, 10));
+        panel.setLayout(new GridLayout(10, 5));
 
         List<Product> products;
         try {
@@ -162,7 +166,7 @@ public class GUI extends javax.swing.JFrame {
                 if (p.getColorValue() != 0) {
                     pButton.setBackground(new Color(p.getColorValue()));
                 }
-                pButton.setSize(140, 50);
+                //pButton.setSize(140, 50);
                 pButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -185,6 +189,10 @@ public class GUI extends javax.swing.JFrame {
 
                 });
                 panel.add(pButton);
+            }
+
+            for (int i = products.size() - 1; i < 50; i++) {
+                panel.add(new JPanel());
             }
 
             panelMain.add(panel, c.getName());
