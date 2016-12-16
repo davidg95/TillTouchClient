@@ -114,12 +114,10 @@ public class GUI extends javax.swing.JFrame {
     private void setTotalLabel(double val) {
         if (val > 1) {
             DecimalFormat df = new DecimalFormat("#.00"); // Set your desired format here.
-            System.out.println(df.format(val));
             lblTotal.setText("Total: £" + df.format(val));
             lblTotalDue.setText("Total Due: £" + df.format(val));
         } else {
             DecimalFormat df = new DecimalFormat("0.00"); // Set your desired format here.
-            System.out.println(df.format(val));
             lblTotal.setText("Total: £" + df.format(val));
             lblTotalDue.setText("Total Due: £" + df.format(val));
         }
