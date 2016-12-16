@@ -248,7 +248,16 @@ public class GUI extends javax.swing.JFrame {
         } catch (IOException ex) {
         }
         if (amountDue < 0) {
-            TouchDialog.showMessageDialog(this, "Change", "Change: £" + amountDue);
+            if (amountDue > 1) {
+                DecimalFormat df = new DecimalFormat("#.00"); // Set your desired format here.
+                lblTotal.setText("Total: £" + df.format(amountDue));
+                lblTotalDue.setText("Total Due: £" + df.format(amountDue));
+            } else {
+                DecimalFormat df = new DecimalFormat("0.00"); // Set your desired format here.
+                lblTotal.setText("Total: £" + df.format(amountDue));
+                lblTotalDue.setText("Total Due: £" + df.format(amountDue));
+                TouchDialog.showMessageDialog(this, "Change", "Change: £" + df.format(amountDue));
+            }
         }
         newSale();
     }
@@ -376,6 +385,11 @@ public class GUI extends javax.swing.JFrame {
         jButton11.setMaximumSize(new java.awt.Dimension(100, 60));
         jButton11.setMinimumSize(new java.awt.Dimension(100, 60));
         jButton11.setPreferredSize(new java.awt.Dimension(100, 60));
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
 
         jButton12.setText("0");
         jButton12.setMaximumSize(new java.awt.Dimension(100, 60));
@@ -878,6 +892,10 @@ public class GUI extends javax.swing.JFrame {
             TouchDialog.showMessageDialog(this, "Error", ex);
         }
     }//GEN-LAST:event_btnAddCustomerActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton11ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel CardsPanel;
