@@ -5,13 +5,9 @@
  */
 package io.github.davidg95.Till.tilltouchclient;
 
-import io.github.davidg95.Till.till.LoginException;
 import io.github.davidg95.Till.till.ServerConnection;
 import io.github.davidg95.Till.till.Staff;
 import io.github.davidg95.Till.till.StaffNotFoundException;
-import java.awt.Component;
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -20,7 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
 /**
@@ -29,7 +24,7 @@ import javax.swing.JOptionPane;
  */
 public class LoginDialog extends javax.swing.JDialog {
 
-    private static JDialog dialog;
+    private static final LoginDialog dialog;
     private static Staff staff;
 
     private final List<Staff> staffList;
@@ -46,16 +41,12 @@ public class LoginDialog extends javax.swing.JDialog {
         sc = TillTouchClient.getServerConnection();
         staffList = new ArrayList<>();
     }
+    
+    static{
+        dialog = new LoginDialog(TillTouchClient.g);
+    }
 
-    public static Staff showDialog(Component parent) {
-        Window window = null;
-        if (parent instanceof Dialog || parent instanceof Frame) {
-            window = (Window) parent;
-        }
-        if (dialog == null) {
-            dialog = new LoginDialog(window);
-            dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        }
+    public static Staff showDialog() {
         staff = null;
         dialog.setVisible(true);
         return staff;
@@ -67,11 +58,7 @@ public class LoginDialog extends javax.swing.JDialog {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    logon(sc.tillLogin(s.getId()));
-                } catch (IOException | LoginException | SQLException ex) {
-                    showError(ex);
-                }
+                logon(s);
             }
 
         });
@@ -100,18 +87,7 @@ public class LoginDialog extends javax.swing.JDialog {
         btnLogIn = new javax.swing.JButton();
         btnExit = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-
-        javax.swing.GroupLayout panelStaffLayout = new javax.swing.GroupLayout(panelStaff);
-        panelStaff.setLayout(panelStaffLayout);
-        panelStaffLayout.setHorizontalGroup(
-            panelStaffLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 932, Short.MAX_VALUE)
-        );
-        panelStaffLayout.setVerticalGroup(
-            panelStaffLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 389, Short.MAX_VALUE)
-        );
+        panelStaff.setLayout(new java.awt.GridLayout());
 
         btnLogIn.setText("Log In");
         btnLogIn.addActionListener(new java.awt.event.ActionListener() {
@@ -132,25 +108,26 @@ public class LoginDialog extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelStaff, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(360, 360, 360)
+                        .addContainerGap()
+                        .addComponent(panelStaff, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(389, 389, 389)
                         .addComponent(btnLogIn, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 294, Short.MAX_VALUE)
                         .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(panelStaff, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(6, 6, 6)
+                .addComponent(panelStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnExit, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
-                    .addComponent(btnLogIn, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE))
+                    .addComponent(btnLogIn, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
+                    .addComponent(btnExit, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -158,7 +135,7 @@ public class LoginDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogInActionPerformed
-        int id = Integer.parseInt(JOptionPane.showInputDialog(this, "Enter ID", "Log on", JOptionPane.PLAIN_MESSAGE));
+        int id = (int) NumberEntry.showNumberEntryDialog(this, "Enter Logon ID");
         try {
             Staff s = sc.getStaff(id);
             staffList.add(s);
