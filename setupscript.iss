@@ -28,7 +28,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\David\Honors Project\Till\TillTouchClient\installer\start.bat"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\David\Honors Project\Till\TillTouchClient\installer\JTill Terminal.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\David\Honors Project\Till\TillTouchClient\installer\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -36,7 +36,7 @@ Source: "C:\Users\David\Honors Project\Till\TillTouchClient\installer\*"; DestDi
 Name: "{group}\JTill Terminal"; Filename: "{app}\start.bat"
 Name: "{group}\{cm:ProgramOnTheWeb,JTill Terminal}"; Filename: "http://www.davidscode.ddns.net"
 Name: "{group}\{cm:UninstallProgram,JTill Terminal}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\JTill Terminal"; Filename: "{app}\start.bat"; IconFilename: "{app}\favicon.ico"; Tasks: desktopicon
+Name: "{commondesktop}\JTill Terminal"; Filename: "{app}\JTill Terminal.bat"; IconFilename: "{app}\favicon.ico"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\start.bat"; Description: "{cm:LaunchProgram,JTill Terminal}"; Flags: shellexec postinstall skipifsilent
