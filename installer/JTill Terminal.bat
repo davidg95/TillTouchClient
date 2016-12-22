@@ -1,2 +1,2 @@
 @echo off
-start javaw -jar TillTouchClient.jar
+start javaw -jar JTillTouchClient.jar

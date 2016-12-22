@@ -15,9 +15,9 @@ AppSupportURL=http://www.davidscode.ddns.net
 AppUpdatesURL=http://www.davidscode.ddns.net
 DefaultDirName=C:/JTill Terminal
 DefaultGroupName=JTill Terminal
-OutputDir=C:\Users\David\Honors Project\Till\TillTouchClient\Compiler
+OutputDir=C:\Users\David\Honors Project\Till\JTillTouchClient\Compiler
 OutputBaseFilename=jtillterminalinstaller
-SetupIconFile=C:\Users\David\Honors Project\Till\TillTouchClient\installer\favicon.ico
+SetupIconFile=C:\Users\David\Honors Project\Till\JTillTouchClient\installer\favicon.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -28,16 +28,16 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\David\Honors Project\Till\TillTouchClient\installer\JTill Terminal.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\David\Honors Project\Till\TillTouchClient\installer\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\David\Honors Project\Till\JTillTouchClient\installer\JTill Terminal.bat"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\David\Honors Project\Till\JTillTouchClient\installer\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\JTill Terminal"; Filename: "{app}\start.bat"
+Name: "{group}\JTill Terminal"; Filename: "{app}\JTill Terminal.bat"
 Name: "{group}\{cm:ProgramOnTheWeb,JTill Terminal}"; Filename: "http://www.davidscode.ddns.net"
 Name: "{group}\{cm:UninstallProgram,JTill Terminal}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\JTill Terminal"; Filename: "{app}\JTill Terminal.bat"; IconFilename: "{app}\favicon.ico"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\start.bat"; Description: "{cm:LaunchProgram,JTill Terminal}"; Flags: shellexec postinstall skipifsilent
+Filename: "{app}\JTill Terminal.bat"; Description: "{cm:LaunchProgram,JTill Terminal}"; Flags: shellexec postinstall skipifsilent
 

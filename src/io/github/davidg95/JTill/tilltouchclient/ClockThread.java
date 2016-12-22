@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.github.davidg95.Till.tilltouchclient;
+package io.github.davidg95.JTill.tilltouchclient;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;

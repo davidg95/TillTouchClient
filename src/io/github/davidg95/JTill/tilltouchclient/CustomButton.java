@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.github.davidg95.Till.tilltouchclient;
+package io.github.davidg95.JTill.tilltouchclient;
 
-import io.github.davidg95.Till.till.ButtonFunction;
+import io.github.davidg95.JTill.jtill.ButtonFunction;
 import javax.swing.JButton;
 
 /**

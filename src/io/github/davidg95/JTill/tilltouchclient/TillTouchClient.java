@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.github.davidg95.Till.tilltouchclient;
+package io.github.davidg95.JTill.tilltouchclient;
 
-import io.github.davidg95.Till.till.ServerConnection;
+import io.github.davidg95.JTill.jtill.ServerConnection;
 import java.awt.Image;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -43,7 +43,7 @@ public class TillTouchClient {
     }
 
     public TillTouchClient() {
-        icon = new javax.swing.ImageIcon(getClass().getResource("/io/github/davidg95/Till/resources/tillIcon.png")).getImage();
+        icon = new javax.swing.ImageIcon(getClass().getResource("/io/github/davidg95/JTill/resources/tillIcon.png")).getImage();
         loadProperties();
         sc = new ServerConnection(HOST_NAME);
         g = new GUI();
@@ -56,7 +56,7 @@ public class TillTouchClient {
             g.setButtons();
             g.login();
         } catch (IOException ex) {
-            int opt = JOptionPane.showOptionDialog(null, "Error connecting to server " + SERVER_ADDRESS + " on port " + PORT + "\nTry again?", "Connection Error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, new javax.swing.ImageIcon(getClass().getResource("/io/github/davidg95/Till/resources/tillIcon.png")), null, null);
+            int opt = JOptionPane.showOptionDialog(null, "Error connecting to server " + SERVER_ADDRESS + " on port " + PORT + "\nTry again?", "Connection Error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, new javax.swing.ImageIcon(getClass().getResource("/io/github/davidg95/JTill/resources/tillIcon.png")), null, null);
             if (opt == JOptionPane.YES_OPTION) {
                 initialSetup();
                 saveProperties();

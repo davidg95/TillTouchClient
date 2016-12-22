@@ -3,19 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.github.davidg95.Till.tilltouchclient;
+package io.github.davidg95.JTill.tilltouchclient;
 
-import io.github.davidg95.Till.till.Category;
-import io.github.davidg95.Till.till.Customer;
-import io.github.davidg95.Till.till.CustomerNotFoundException;
-import io.github.davidg95.Till.till.LoginException;
-import io.github.davidg95.Till.till.OutOfStockException;
-import io.github.davidg95.Till.till.Product;
-import io.github.davidg95.Till.till.ProductNotFoundException;
-import io.github.davidg95.Till.till.Sale;
-import io.github.davidg95.Till.till.ServerConnection;
-import io.github.davidg95.Till.till.Staff;
-import io.github.davidg95.Till.till.StaffNotFoundException;
+import io.github.davidg95.JTill.jtill.Category;
+import io.github.davidg95.JTill.jtill.Customer;
+import io.github.davidg95.JTill.jtill.CustomerNotFoundException;
+import io.github.davidg95.JTill.jtill.LoginException;
+import io.github.davidg95.JTill.jtill.OutOfStockException;
+import io.github.davidg95.JTill.jtill.Product;
+import io.github.davidg95.JTill.jtill.ProductNotFoundException;
+import io.github.davidg95.JTill.jtill.Sale;
+import io.github.davidg95.JTill.jtill.ServerConnection;
+import io.github.davidg95.JTill.jtill.Staff;
+import io.github.davidg95.JTill.jtill.StaffNotFoundException;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;

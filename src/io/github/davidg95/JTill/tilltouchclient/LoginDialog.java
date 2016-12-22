@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.github.davidg95.Till.tilltouchclient;
+package io.github.davidg95.JTill.tilltouchclient;
 
-import io.github.davidg95.Till.till.ServerConnection;
-import io.github.davidg95.Till.till.Staff;
-import io.github.davidg95.Till.till.StaffNotFoundException;
+import io.github.davidg95.JTill.jtill.ServerConnection;
+import io.github.davidg95.JTill.jtill.Staff;
+import io.github.davidg95.JTill.jtill.StaffNotFoundException;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -87,7 +87,7 @@ public class LoginDialog extends javax.swing.JDialog {
         btnLogIn = new javax.swing.JButton();
         btnExit = new javax.swing.JButton();
 
-        panelStaff.setLayout(new java.awt.GridLayout());
+        panelStaff.setLayout(new java.awt.GridLayout(1, 0));
 
         btnLogIn.setText("Log In");
         btnLogIn.addActionListener(new java.awt.event.ActionListener() {
