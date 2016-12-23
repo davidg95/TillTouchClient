@@ -162,7 +162,7 @@ public class GUI extends javax.swing.JFrame {
         if (c.getColorValue() != 0) {
             cButton.setBackground(new Color(c.getColorValue()));
         }
-        cButton.setSize(140, 50);
+        //cButton.setSize(140, 50);
         cButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -333,8 +333,8 @@ public class GUI extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("JTill Terminal");
         setIconImage(TillTouchClient.getIcon());
-        setMaximumSize(null);
-        setMinimumSize(null);
+        setMaximumSize(new java.awt.Dimension(1024, 768));
+        setMinimumSize(new java.awt.Dimension(1024, 768));
         setUndecorated(true);
 
         CardsPanel.setMaximumSize(new java.awt.Dimension(1024, 768));
@@ -473,6 +473,9 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
+        panelMain.setMaximumSize(null);
+        panelMain.setMinimumSize(null);
+        panelMain.setPreferredSize(new java.awt.Dimension(708, 494));
         panelMain.setLayout(new java.awt.CardLayout());
 
         lblVerison.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
@@ -496,7 +499,7 @@ public class GUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblHost, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblStaff, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+                .addComponent(lblStaff, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblTime, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -527,8 +530,9 @@ public class GUI extends javax.swing.JFrame {
         lblItems.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         lblItems.setText("Items: 0");
 
-        panelCategories.setMaximumSize(new java.awt.Dimension(99999, 99999));
-        panelCategories.setPreferredSize(new java.awt.Dimension(686, 100));
+        panelCategories.setMaximumSize(new java.awt.Dimension(708, 100));
+        panelCategories.setMinimumSize(new java.awt.Dimension(708, 100));
+        panelCategories.setPreferredSize(new java.awt.Dimension(708, 100));
         panelCategories.setLayout(new java.awt.GridLayout(2, 5));
 
         btnLogOut.setText("Log Out");
@@ -564,10 +568,8 @@ public class GUI extends javax.swing.JFrame {
         panelMainScreen.setLayout(panelMainScreenLayout);
         panelMainScreenLayout.setHorizontalGroup(
             panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelMainScreenLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(topPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelMainScreenLayout.createSequentialGroup()
+                .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelMainScreenLayout.createSequentialGroup()
                         .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -580,7 +582,8 @@ public class GUI extends javax.swing.JFrame {
                             .addGroup(panelMainScreenLayout.createSequentialGroup()
                                 .addComponent(lblTotal)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblItems, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(lblItems, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(topPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelMainScreenLayout.setVerticalGroup(
@@ -590,9 +593,9 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(topPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelMainScreenLayout.createSequentialGroup()
-                        .addComponent(panelMain, javax.swing.GroupLayout.PREFERRED_SIZE, 482, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelMainScreenLayout.createSequentialGroup()
+                        .addComponent(panelMain, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(panelCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panelMainScreenLayout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
