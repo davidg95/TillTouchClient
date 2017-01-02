@@ -261,14 +261,30 @@ public class GUI extends javax.swing.JFrame {
                 DecimalFormat df = new DecimalFormat("0.00"); // Set your desired format here.
                 lblTotal.setText("Total: £" + df.format(amountDue));
                 lblTotalDue.setText("Total Due: £" + df.format(amountDue));
-                TouchDialog.showMessageDialog(this, "Change", "Change: £" + df.format(amountDue));
+                TouchDialog.showMessageDialog(this, "Change", "Change: £" + df.format(-amountDue));
             }
         }
         newSale();
     }
 
     private void showError(Exception ex) {
-        JOptionPane.showMessageDialog(this, ex, "Error", JOptionPane.ERROR_MESSAGE);
+        TouchDialog.showMessageDialog(this, "Error", ex);
+    }
+
+    private void addMoney(double val) {
+        amountDue -= val;
+        if (amountDue <= 0) {
+            for (int p : sale.getProducts()) {
+                try {
+                    sc.purchaseProduct(p);
+                } catch (IOException | ProductNotFoundException | SQLException | OutOfStockException ex) {
+
+                }
+            }
+            completeCurrentSale();
+        } else {
+            setTotalLabel(amountDue);
+        }
     }
 
     /**
@@ -473,8 +489,6 @@ public class GUI extends javax.swing.JFrame {
                     .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
-        panelMain.setMaximumSize(null);
-        panelMain.setMinimumSize(null);
         panelMain.setPreferredSize(new java.awt.Dimension(708, 494));
         panelMain.setLayout(new java.awt.CardLayout());
 
@@ -626,18 +640,38 @@ public class GUI extends javax.swing.JFrame {
         btn£5.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         btn£5.setText("£5");
         btn£5.setPreferredSize(new java.awt.Dimension(130, 130));
+        btn£5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn£5ActionPerformed(evt);
+            }
+        });
 
         btn£10.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         btn£10.setText("£10");
         btn£10.setPreferredSize(new java.awt.Dimension(130, 130));
+        btn£10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn£10ActionPerformed(evt);
+            }
+        });
 
         btn£20.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         btn£20.setText("£20");
         btn£20.setPreferredSize(new java.awt.Dimension(130, 130));
+        btn£20.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn£20ActionPerformed(evt);
+            }
+        });
 
         btn£50.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         btn£50.setText("£50");
         btn£50.setPreferredSize(new java.awt.Dimension(130, 130));
+        btn£50.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn£50ActionPerformed(evt);
+            }
+        });
 
         btnExact.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         btnExact.setText("EXACT");
@@ -778,26 +812,25 @@ public class GUI extends javax.swing.JFrame {
         panelLoginLayout.setHorizontalGroup(
             panelLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelLoginLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(panelLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelStaff, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelLoginLayout.createSequentialGroup()
                         .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnLogIn, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 739, Short.MAX_VALUE)))
+                        .addGap(0, 0, 0)
+                        .addComponent(btnLogIn, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelLoginLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panelStaff, javax.swing.GroupLayout.DEFAULT_SIZE, 1004, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelLoginLayout.setVerticalGroup(
             panelLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelLoginLayout.createSequentialGroup()
                 .addGap(6, 6, 6)
-                .addComponent(panelStaff, javax.swing.GroupLayout.PREFERRED_SIZE, 608, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnLogIn, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                    .addComponent(btnExit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addComponent(panelStaff, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
+                .addGap(165, 165, 165)
+                .addGroup(panelLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnExit, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                    .addComponent(btnLogIn, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)))
         );
 
         CardsPanel.add(panelLogin, "cardLogin");
@@ -877,38 +910,67 @@ public class GUI extends javax.swing.JFrame {
             TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
         } else {
             double val = NumberEntry.showNumberEntryDialog(this, "Enter Amount") / 100;
-            amountDue -= val;
-            if (amountDue <= 0) {
-                for (int p : sale.getProducts()) {
-                    try {
-                        sc.purchaseProduct(p);
-                    } catch (IOException | ProductNotFoundException | SQLException | OutOfStockException ex) {
-
-                    }
-                }
-                completeCurrentSale();
-            } else {
-                setTotalLabel(amountDue);
-            }
+            addMoney(val);
         }
     }//GEN-LAST:event_btnCustomValueActionPerformed
 
     private void btnAddCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCustomerActionPerformed
-        String customerID = JOptionPane.showInputDialog(this, "Enter Customer ID");
-        if (!customerID.equals("")) {
-            try {
-                Customer c = sc.getCustomer(customerID);
-                sale.setCustomer(c.getId());
-                lblCustomer.setText("Customer: " + c.getName());
-            } catch (IOException | CustomerNotFoundException | SQLException ex) {
-                TouchDialog.showMessageDialog(this, "Error", ex);
+        if (sale.getCustomer() == -1) {
+            String customerID = Integer.toString((int)NumberEntry.showNumberEntryDialog(this, "Enter Customer ID"));
+            if (!customerID.equals("")) {
+                try {
+                    Customer c = sc.getCustomer(customerID);
+                    sale.setCustomer(c.getId());
+                    lblCustomer.setText("Customer: " + c.getName());
+                    btnAddCustomer.setText("Remove Customer");
+                    btnAddCustomer.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+                } catch (IOException | CustomerNotFoundException | SQLException ex) {
+                    TouchDialog.showMessageDialog(this, "Error", ex);
+                }
             }
+        } else {
+            sale.setCustomer(-1);
+            btnAddCustomer.setText("Add Customer");
+            btnAddCustomer.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+            lblCustomer.setText("No Customer");
         }
     }//GEN-LAST:event_btnAddCustomerActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton11ActionPerformed
+
+    private void btn£5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn£5ActionPerformed
+        if (sale.getProducts().isEmpty()) {
+            TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
+        } else {
+            addMoney(5);
+        }
+    }//GEN-LAST:event_btn£5ActionPerformed
+
+    private void btn£10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn£10ActionPerformed
+        if (sale.getProducts().isEmpty()) {
+            TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
+        } else {
+            addMoney(10);
+        }
+    }//GEN-LAST:event_btn£10ActionPerformed
+
+    private void btn£20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn£20ActionPerformed
+        if (sale.getProducts().isEmpty()) {
+            TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
+        } else {
+            addMoney(20);
+        }
+    }//GEN-LAST:event_btn£20ActionPerformed
+
+    private void btn£50ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn£50ActionPerformed
+        if (sale.getProducts().isEmpty()) {
+            TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
+        } else {
+            addMoney(50);
+        }
+    }//GEN-LAST:event_btn£50ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel CardsPanel;

@@ -68,7 +68,7 @@ public class TouchDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
-        lblMessage.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lblMessage.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
 
         btnOk.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         btnOk.setText("Ok");
@@ -86,8 +86,7 @@ public class TouchDialog extends javax.swing.JDialog {
                 .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnOk, javax.swing.GroupLayout.DEFAULT_SIZE, 717, Short.MAX_VALUE))
-                .addGap(0, 0, 0))
+                    .addComponent(btnOk, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
