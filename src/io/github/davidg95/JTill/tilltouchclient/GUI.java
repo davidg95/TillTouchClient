@@ -265,6 +265,9 @@ public class GUI extends javax.swing.JFrame {
             }
         }
         newSale();
+        if(Settings.autoLogout){
+            logout();
+        }
     }
 
     private void showError(Exception ex) {

@@ -6,6 +6,7 @@
 package io.github.davidg95.JTill.tilltouchclient;
 
 import io.github.davidg95.JTill.jtill.ServerConnection;
+import io.github.davidg95.JTill.jtill.TillInitData;
 import java.awt.Image;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -53,6 +54,9 @@ public class TillTouchClient {
         try {
             sc.connect(SERVER_ADDRESS, PORT);
             g.setVisible(true);
+            TillInitData init = sc.getInitData();
+            Settings.autoLogout = init.isAutoLogout();
+            Settings.logoutTimeout = init.getLogoutTimeout();
             g.setButtons();
             g.login();
         } catch (IOException ex) {
