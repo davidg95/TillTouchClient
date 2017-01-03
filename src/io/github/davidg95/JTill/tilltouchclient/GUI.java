@@ -19,7 +19,10 @@ import io.github.davidg95.JTill.jtill.StaffNotFoundException;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -265,7 +268,7 @@ public class GUI extends javax.swing.JFrame {
             }
         }
         newSale();
-        if(Settings.autoLogout){
+        if (Settings.autoLogout) {
             logout();
         }
     }
@@ -517,8 +520,8 @@ public class GUI extends javax.swing.JFrame {
                 .addComponent(lblHost, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblStaff, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblTime, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(111, 111, 111)
+                .addComponent(lblTime))
         );
         topPanelLayout.setVerticalGroup(
             topPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -919,7 +922,7 @@ public class GUI extends javax.swing.JFrame {
 
     private void btnAddCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCustomerActionPerformed
         if (sale.getCustomer() == -1) {
-            String customerID = Integer.toString((int)NumberEntry.showNumberEntryDialog(this, "Enter Customer ID"));
+            String customerID = Integer.toString((int) NumberEntry.showNumberEntryDialog(this, "Enter Customer ID"));
             if (!customerID.equals("")) {
                 try {
                     Customer c = sc.getCustomer(customerID);
