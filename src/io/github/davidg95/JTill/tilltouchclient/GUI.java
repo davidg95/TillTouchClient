@@ -862,7 +862,7 @@ public class GUI extends javax.swing.JFrame {
     private void txtNumberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumberActionPerformed
         try {
             String barcode = txtNumber.getText();
-            Product p = sc.getProductByBarCode(barcode);
+            Product p = sc.getProductByBarcode(barcode);
             sale.addItem(p);
             setTotalLabel(sale.getTotal());
             setItemsLabel(sale.getItemCount());
@@ -922,8 +922,8 @@ public class GUI extends javax.swing.JFrame {
 
     private void btnAddCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCustomerActionPerformed
         if (sale.getCustomer() == -1) {
-            String customerID = Integer.toString((int) NumberEntry.showNumberEntryDialog(this, "Enter Customer ID"));
-            if (!customerID.equals("")) {
+            int customerID = (int) NumberEntry.showNumberEntryDialog(this, "Enter Customer ID");
+            if (customerID > 0) {
                 try {
                     Customer c = sc.getCustomer(customerID);
                     sale.setCustomer(c.getId());
