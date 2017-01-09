@@ -6,7 +6,6 @@
 package io.github.davidg95.JTill.tilltouchclient;
 
 import io.github.davidg95.JTill.jtill.ServerConnection;
-import io.github.davidg95.JTill.jtill.TillInitData;
 import java.awt.Image;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -46,19 +45,10 @@ public class TillTouchClient {
     public TillTouchClient() {
         icon = new javax.swing.ImageIcon(getClass().getResource("/io/github/davidg95/JTill/resources/tillIcon.png")).getImage();
         loadProperties();
-        sc = new ServerConnection(HOST_NAME);
-        g = new GUI();
-    }
-
-    public void start() {
         try {
+            sc = new ServerConnection(HOST_NAME);
             sc.connect(SERVER_ADDRESS, PORT);
-            g.setVisible(true);
-            TillInitData init = sc.getInitData();
-            Settings.autoLogout = init.isAutoLogout();
-            Settings.logoutTimeout = init.getLogoutTimeout();
-            g.setButtons();
-            g.login();
+            sc.getInitData();
         } catch (IOException ex) {
             int opt = JOptionPane.showOptionDialog(null, "Error connecting to server " + SERVER_ADDRESS + " on port " + PORT + "\nTry again?", "Connection Error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, new javax.swing.ImageIcon(getClass().getResource("/io/github/davidg95/JTill/resources/tillIcon.png")), null, null);
             if (opt == JOptionPane.YES_OPTION) {
@@ -69,6 +59,13 @@ public class TillTouchClient {
                 System.exit(0);
             }
         }
+        g = new GUI();
+    }
+
+    public void start() {
+        g.setVisible(true);
+        g.setButtons();
+        g.login();
     }
 
     public static ServerConnection getServerConnection() {

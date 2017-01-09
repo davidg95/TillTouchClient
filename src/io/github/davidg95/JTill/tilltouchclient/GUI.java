@@ -16,13 +16,11 @@ import io.github.davidg95.JTill.jtill.Sale;
 import io.github.davidg95.JTill.jtill.ServerConnection;
 import io.github.davidg95.JTill.jtill.Staff;
 import io.github.davidg95.JTill.jtill.StaffNotFoundException;
+import io.github.davidg95.JTill.jtill.TillInitData;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -72,6 +70,7 @@ public class GUI extends javax.swing.JFrame {
         newSale();
         ClockThread.setClockLabel(lblTime);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        lblMessage.setText(TillInitData.initData.getLogonScreenMessage());
     }
 
     public void setButtons() {
@@ -268,7 +267,7 @@ public class GUI extends javax.swing.JFrame {
             }
         }
         newSale();
-        if (Settings.autoLogout) {
+        if (TillInitData.initData.autoLogout) {
             logout();
         }
     }
@@ -351,6 +350,7 @@ public class GUI extends javax.swing.JFrame {
         panelStaff = new javax.swing.JPanel();
         btnLogIn = new javax.swing.JButton();
         btnExit = new javax.swing.JButton();
+        lblMessage = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("JTill Terminal");
@@ -822,7 +822,10 @@ public class GUI extends javax.swing.JFrame {
                     .addGroup(panelLoginLayout.createSequentialGroup()
                         .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, 0)
-                        .addComponent(btnLogIn, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnLogIn, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(panelLoginLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(panelStaff, javax.swing.GroupLayout.DEFAULT_SIZE, 1004, Short.MAX_VALUE)))
@@ -833,10 +836,16 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(panelLoginLayout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addComponent(panelStaff, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
-                .addGap(165, 165, 165)
-                .addGroup(panelLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnExit, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
-                    .addComponent(btnLogIn, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)))
+                .addGroup(panelLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelLoginLayout.createSequentialGroup()
+                        .addGap(165, 165, 165)
+                        .addGroup(panelLoginLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnExit, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                            .addComponent(btnLogIn, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLoginLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblMessage)
+                        .addGap(73, 73, 73))))
         );
 
         CardsPanel.add(panelLogin, "cardLogin");
@@ -1013,6 +1022,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JLabel lblCustomer;
     private javax.swing.JLabel lblHost;
     private javax.swing.JLabel lblItems;
+    private javax.swing.JLabel lblMessage;
     private javax.swing.JLabel lblStaff;
     private javax.swing.JLabel lblTime;
     private javax.swing.JLabel lblTotal;
