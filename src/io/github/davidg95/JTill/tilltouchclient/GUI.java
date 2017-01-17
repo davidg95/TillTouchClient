@@ -5,7 +5,7 @@
  */
 package io.github.davidg95.JTill.tilltouchclient;
 
-import io.github.davidg95.JTill.jtill.Category;
+import io.github.davidg95.JTill.jtill.Button;
 import io.github.davidg95.JTill.jtill.Customer;
 import io.github.davidg95.JTill.jtill.CustomerNotFoundException;
 import io.github.davidg95.JTill.jtill.LoginException;
@@ -13,6 +13,8 @@ import io.github.davidg95.JTill.jtill.OutOfStockException;
 import io.github.davidg95.JTill.jtill.Product;
 import io.github.davidg95.JTill.jtill.ProductNotFoundException;
 import io.github.davidg95.JTill.jtill.Sale;
+import io.github.davidg95.JTill.jtill.Screen;
+import io.github.davidg95.JTill.jtill.ScreenNotFoundException;
 import io.github.davidg95.JTill.jtill.ServerConnection;
 import io.github.davidg95.JTill.jtill.Staff;
 import io.github.davidg95.JTill.jtill.StaffNotFoundException;
@@ -54,7 +56,7 @@ public class GUI extends javax.swing.JFrame {
 
     private final CardLayout categoryCards;
     private final CardLayout screenCards;
-    private ButtonGroup cardsButonGroup;
+    private final ButtonGroup cardsButonGroup;
 
     /**
      * Creates new form GUI
@@ -75,17 +77,17 @@ public class GUI extends javax.swing.JFrame {
 
     public void setButtons() {
         try {
-            List<Category> categorys = sc.getCategoryButtons();
+            List<Screen> screens = sc.getAllScreens();
             panelCategories.setLayout(new GridLayout(2, 5));
-            for (Category c : categorys) {
-                addCategoryButton(c);
+            for (Screen s : screens) {
+                addScreenButton(s);
             }
 
-            for (int i = categorys.size() - 1; i < 10; i++) {
+            for (int i = screens.size() - 1; i < 10; i++) {
                 panelCategories.add(new JPanel());
             }
-        } catch (IOException ex) {
-            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | SQLException ex) {
+            showError(ex);
         }
     }
 
@@ -136,16 +138,6 @@ public class GUI extends javax.swing.JFrame {
 
     public void login() {
         screenCards.show(CardsPanel, "cardLogin");
-//        try {
-//            int staffID = (int) NumberEntry.showNumberEntryDialog(this, "Enter Logon ID");
-//            staff = sc.tillLogin(staffID);
-//            lblStaff.setText(staff.getName());
-//            return;
-//        } catch (IOException | LoginException | SQLException ex) {
-//            JOptionPane.showMessageDialog(this, ex, "Logon Error", JOptionPane.ERROR_MESSAGE);
-//        }
-//        login();
-//        staff = LoginDialog.showDialog(this);
     }
 
     public void logout() {
@@ -159,16 +151,16 @@ public class GUI extends javax.swing.JFrame {
         login();
     }
 
-    public void addCategoryButton(Category c) {
-        JToggleButton cButton = new JToggleButton(c.getName());
-        if (c.getColorValue() != 0) {
-            cButton.setBackground(new Color(c.getColorValue()));
+    public void addScreenButton(Screen s) {
+        JToggleButton cButton = new JToggleButton(s.getName());
+        if (s.getColorValue() != 0) {
+            cButton.setBackground(new Color(s.getColorValue()));
         }
         //cButton.setSize(140, 50);
         cButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                categoryCards.show(panelMain, c.getName());
+                categoryCards.show(panelMain, s.getName());
             }
 
         });
@@ -176,32 +168,37 @@ public class GUI extends javax.swing.JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(10, 5));
 
-        List<Product> products;
+        List<Button> buttons;
         try {
-            products = sc.getProductButtons(c.getID());
-            for (Product p : products) {
-                JButton pButton = new JButton(p.getShortName());
-                if (p.getColorValue() != 0) {
-                    pButton.setBackground(new Color(p.getColorValue()));
+            buttons = sc.getButtonsOnScreen(s);
+            for (Button b : buttons) {
+                JButton pButton = new JButton(b.getName());
+                if (b.getColorValue() != 0) {
+                    pButton.setBackground(new Color(b.getColorValue()));
                 }
                 //pButton.setSize(140, 50);
                 pButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (p.isOpen()) {
-                            double price = NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100;
-                            if (price > 0) {
-                                p.setPrice(price);
+                        try {
+                            Product p = sc.getProduct(b.getProduct_id());
+                            if (p.isOpen()) {
+                                double price = NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100;
+                                if (price > 0) {
+                                    p.setPrice(price);
+                                    sale.addItem(p);
+                                    setTotalLabel(sale.getTotal());
+                                    setItemsLabel(sale.getItemCount());
+                                    addToList(p);
+                                }
+                            } else {
                                 sale.addItem(p);
                                 setTotalLabel(sale.getTotal());
                                 setItemsLabel(sale.getItemCount());
                                 addToList(p);
                             }
-                        } else {
-                            sale.addItem(p);
-                            setTotalLabel(sale.getTotal());
-                            setItemsLabel(sale.getItemCount());
-                            addToList(p);
+                        } catch (IOException | ProductNotFoundException | SQLException ex) {
+                            showError(ex);
                         }
                     }
 
@@ -209,14 +206,16 @@ public class GUI extends javax.swing.JFrame {
                 panel.add(pButton);
             }
 
-            for (int i = products.size() - 1; i < 50; i++) {
+            for (int i = buttons.size() - 1; i < 50; i++) {
                 panel.add(new JPanel());
             }
 
-            panelMain.add(panel, c.getName());
+            panelMain.add(panel, s.getName());
             panelCategories.add(cButton);
         } catch (IOException | SQLException ex) {
             JOptionPane.showMessageDialog(this, ex, "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (ScreenNotFoundException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
