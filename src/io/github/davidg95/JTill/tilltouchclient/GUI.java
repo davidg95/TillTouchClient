@@ -34,7 +34,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
@@ -49,6 +48,8 @@ public class GUI extends javax.swing.JFrame {
     private final ServerConnection sc;
 
     private Staff staff;
+
+    private int quantity = 1;
 
     private Sale sale;
     private double amountDue;
@@ -71,7 +72,7 @@ public class GUI extends javax.swing.JFrame {
         cardsButonGroup = new ButtonGroup();
         newSale();
         ClockThread.setClockLabel(lblTime);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //setExtendedState(JFrame.MAXIMIZED_BOTH);
         lblMessage.setText(TillInitData.initData.getLogonScreenMessage());
     }
 
@@ -105,14 +106,16 @@ public class GUI extends javax.swing.JFrame {
         Object[] s;
         if (price > 1) {
             DecimalFormat df = new DecimalFormat("#.00"); // Set your desired format here.
-            System.out.println(df.format(price));
-            s = new Object[]{p.getShortName(), "£" + df.format(price)};
+            s = new Object[]{quantity, p.getShortName(), "£" + df.format(price * quantity)};
         } else {
             DecimalFormat df = new DecimalFormat("0.00"); // Set your desired format here.
-            System.out.println(df.format(price));
-            s = new Object[]{p.getShortName(), "£" + df.format(price)};
+            s = new Object[]{quantity, p.getShortName(), "£" + df.format(price * quantity)};
         }
-        model.addRow(s);
+        //for (int i = 0; i < quantity; i++) {
+            model.addRow(s);
+        //}
+        quantity = 1;
+        btnQuantity.setText("Quantity: 1");
     }
 
     private void clearList() {
@@ -175,40 +178,44 @@ public class GUI extends javax.swing.JFrame {
             buttons = sc.getButtonsOnScreen(s);
             for (Button b : buttons) {
                 JButton pButton = new JButton(b.getName());
-                if (b.getColorValue() != 0) {
-                    pButton.setBackground(new Color(b.getColorValue()));
-                }
-                //pButton.setSize(140, 50);
-                pButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        try {
-                            Product p = sc.getProduct(b.getProduct_id());
-                            if (p.isOpen()) {
-                                double price = NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100;
-                                if (price > 0) {
-                                    p.setPrice(price);
-                                    sale.addItem(p);
+                if (b.getName().equals("[SPACE]")) {
+                    panel.add(new JPanel());
+                } else {
+                    if (b.getColorValue() != 0) {
+                        pButton.setBackground(new Color(b.getColorValue()));
+                    }
+                    //pButton.setSize(140, 50);
+                    pButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            try {
+                                Product p = sc.getProduct(b.getProduct_id());
+                                if (p.isOpen()) {
+                                    double price = NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100;
+                                    if (price > 0) {
+                                        p.setPrice(price);
+                                        sale.addItem(p, quantity);
+                                        setTotalLabel(sale.getTotal());
+                                        setItemsLabel(sale.getItemCount());
+                                        addToList(p);
+                                    }
+                                } else {
+                                    sale.addItem(p, quantity);
                                     setTotalLabel(sale.getTotal());
                                     setItemsLabel(sale.getItemCount());
                                     addToList(p);
                                 }
-                            } else {
-                                sale.addItem(p);
-                                setTotalLabel(sale.getTotal());
-                                setItemsLabel(sale.getItemCount());
-                                addToList(p);
+                            } catch (IOException | ProductNotFoundException | SQLException ex) {
+                                showError(ex);
                             }
-                        } catch (IOException | ProductNotFoundException | SQLException ex) {
-                            showError(ex);
                         }
-                    }
 
-                });
-                panel.add(pButton);
+                    });
+                    panel.add(pButton);
+                }
             }
 
-            for (int i = buttons.size() - 1; i < 50; i++) {
+            for (int i = buttons.size() - 1; i < 49; i++) {
                 panel.add(new JPanel());
             }
 
@@ -332,6 +339,7 @@ public class GUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         btnLogOut = new javax.swing.JButton();
         btnComplete = new javax.swing.JButton();
+        btnQuantity = new javax.swing.JButton();
         panelPayment = new javax.swing.JPanel();
         btnBack = new javax.swing.JButton();
         lblTotalDue = new javax.swing.JLabel();
@@ -358,7 +366,6 @@ public class GUI extends javax.swing.JFrame {
         setIconImage(TillTouchClient.getIcon());
         setMaximumSize(new java.awt.Dimension(1024, 768));
         setMinimumSize(new java.awt.Dimension(1024, 768));
-        setUndecorated(true);
 
         CardsPanel.setMaximumSize(new java.awt.Dimension(1024, 768));
         CardsPanel.setMinimumSize(new java.awt.Dimension(1024, 768));
@@ -540,10 +547,15 @@ public class GUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Product", "Price"
+                "Qty.", "Product", "Price"
             }
         ));
         jScrollPane2.setViewportView(tblProducts);
+        if (tblProducts.getColumnModel().getColumnCount() > 0) {
+            tblProducts.getColumnModel().getColumn(0).setResizable(false);
+            tblProducts.getColumnModel().getColumn(1).setResizable(false);
+            tblProducts.getColumnModel().getColumn(2).setResizable(false);
+        }
 
         lblTotal.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         lblTotal.setText("Total: £0.00");
@@ -581,18 +593,24 @@ public class GUI extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnLogOut, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+            .addComponent(btnLogOut, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
             .addComponent(btnComplete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
+
+        btnQuantity.setText("Quantity: 1");
+        btnQuantity.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnQuantityActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelMainScreenLayout = new javax.swing.GroupLayout(panelMainScreen);
         panelMainScreen.setLayout(panelMainScreenLayout);
         panelMainScreenLayout.setHorizontalGroup(
             panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelMainScreenLayout.createSequentialGroup()
-                .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(panelMainScreenLayout.createSequentialGroup()
+            .addGroup(panelMainScreenLayout.createSequentialGroup()
+                .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelMainScreenLayout.createSequentialGroup()
                         .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(panelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(panelCategories, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -603,8 +621,12 @@ public class GUI extends javax.swing.JFrame {
                             .addGroup(panelMainScreenLayout.createSequentialGroup()
                                 .addComponent(lblTotal)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblItems, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(topPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(lblItems, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnQuantity)))
+                    .addComponent(topPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelMainScreenLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelMainScreenLayout.setVerticalGroup(
@@ -613,21 +635,24 @@ public class GUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(topPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelMainScreenLayout.createSequentialGroup()
+                .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(panelMainScreenLayout.createSequentialGroup()
                         .addComponent(panelMain, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panelCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(panelCategories, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(33, 33, 33))
                     .addGroup(panelMainScreenLayout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(lblTotal)
                             .addComponent(lblItems, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(panelNumberEntry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(panelNumberEntry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -873,7 +898,7 @@ public class GUI extends javax.swing.JFrame {
         try {
             String barcode = txtNumber.getText();
             Product p = sc.getProductByBarcode(barcode);
-            sale.addItem(p);
+            sale.addItem(p, quantity);
             setTotalLabel(sale.getTotal());
             setItemsLabel(sale.getItemCount());
             addToList(p);
@@ -988,6 +1013,11 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn£50ActionPerformed
 
+    private void btnQuantityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuantityActionPerformed
+        quantity = (int) NumberEntry.showNumberEntryDialog(this, "Enter Quantity for next Product");
+        btnQuantity.setText("Quantity: " + quantity);
+    }//GEN-LAST:event_btnQuantityActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel CardsPanel;
     private javax.swing.JButton btnAddCustomer;
@@ -1001,6 +1031,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton btnExit;
     private javax.swing.JButton btnLogIn;
     private javax.swing.JButton btnLogOut;
+    private javax.swing.JButton btnQuantity;
     private javax.swing.JButton btn£10;
     private javax.swing.JButton btn£20;
     private javax.swing.JButton btn£5;
