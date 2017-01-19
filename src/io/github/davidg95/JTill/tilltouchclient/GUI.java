@@ -74,6 +74,7 @@ public class GUI extends javax.swing.JFrame {
         ClockThread.setClockLabel(lblTime);
         //setExtendedState(JFrame.MAXIMIZED_BOTH);
         lblMessage.setText(TillInitData.initData.getLogonScreenMessage());
+        screenCards.show(CardsPanel, "cardLogin");
     }
 
     public void setButtons() {
@@ -112,7 +113,7 @@ public class GUI extends javax.swing.JFrame {
             s = new Object[]{quantity, p.getShortName(), "£" + df.format(price * quantity)};
         }
         //for (int i = 0; i < quantity; i++) {
-            model.addRow(s);
+        model.addRow(s);
         //}
         quantity = 1;
         btnQuantity.setText("Quantity: 1");
@@ -176,42 +177,47 @@ public class GUI extends javax.swing.JFrame {
         List<Button> buttons;
         try {
             buttons = sc.getButtonsOnScreen(s);
-            for (Button b : buttons) {
-                JButton pButton = new JButton(b.getName());
-                if (b.getName().equals("[SPACE]")) {
-                    panel.add(new JPanel());
-                } else {
-                    if (b.getColorValue() != 0) {
-                        pButton.setBackground(new Color(b.getColorValue()));
-                    }
-                    //pButton.setSize(140, 50);
-                    pButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            try {
-                                Product p = sc.getProduct(b.getProduct_id());
-                                if (p.isOpen()) {
-                                    double price = NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100;
-                                    if (price > 0) {
-                                        p.setPrice(price);
-                                        sale.addItem(p, quantity);
-                                        setTotalLabel(sale.getTotal());
-                                        setItemsLabel(sale.getItemCount());
-                                        addToList(p);
-                                    }
-                                } else {
-                                    sale.addItem(p, quantity);
-                                    setTotalLabel(sale.getTotal());
-                                    setItemsLabel(sale.getItemCount());
-                                    addToList(p);
-                                }
-                            } catch (IOException | ProductNotFoundException | SQLException ex) {
-                                showError(ex);
+            for (int i = 0; i < buttons.size(); i++) {
+                for (Button b : buttons) {
+                    if (b.getOrder() == i) {
+                        JButton pButton = new JButton(b.getName());
+                        if (b.getName().equals("[SPACE]")) {
+                            panel.add(new JPanel());
+                        } else {
+                            if (b.getColorValue() != 0) {
+                                pButton.setBackground(new Color(b.getColorValue()));
                             }
-                        }
+                            //pButton.setSize(140, 50);
+                            pButton.addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    try {
+                                        Product p = sc.getProduct(b.getProduct_id());
+                                        if (p.isOpen()) {
+                                            double price = NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100;
+                                            if (price > 0) {
+                                                p.setPrice(price);
+                                                sale.addItem(p, quantity);
+                                                setTotalLabel(sale.getTotal());
+                                                setItemsLabel(sale.getItemCount());
+                                                addToList(p);
+                                            }
+                                        } else {
+                                            sale.addItem(p, quantity);
+                                            setTotalLabel(sale.getTotal());
+                                            setItemsLabel(sale.getItemCount());
+                                            addToList(p);
+                                        }
+                                    } catch (IOException | ProductNotFoundException | SQLException ex) {
+                                        showError(ex);
+                                    }
+                                }
 
-                    });
-                    panel.add(pButton);
+                            });
+                            panel.add(pButton);
+                        }
+                        break;
+                    }
                 }
             }
 
@@ -644,8 +650,8 @@ public class GUI extends javax.swing.JFrame {
                     .addGroup(panelMainScreenLayout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblTotal)
+                        .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblTotal, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(lblItems, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
