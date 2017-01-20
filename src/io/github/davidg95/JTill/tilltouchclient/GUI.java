@@ -79,8 +79,6 @@ public class GUI extends javax.swing.JFrame {
         cardsButonGroup = new ButtonGroup();
         newSale();
         ClockThread.setClockLabel(lblTime);
-        //setExtendedState(JFrame.MAXIMIZED_BOTH);
-        lblMessage.setText(TillInitData.initData.getLogonScreenMessage());
         screenCards.show(CardsPanel, "cardLogin");
     }
 
