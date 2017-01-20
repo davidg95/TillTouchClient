@@ -6,12 +6,15 @@
 package io.github.davidg95.JTill.tilltouchclient;
 
 import io.github.davidg95.JTill.jtill.Button;
+import io.github.davidg95.JTill.jtill.Category;
+import io.github.davidg95.JTill.jtill.CategoryNotFoundException;
 import io.github.davidg95.JTill.jtill.Customer;
 import io.github.davidg95.JTill.jtill.CustomerNotFoundException;
 import io.github.davidg95.JTill.jtill.LoginException;
 import io.github.davidg95.JTill.jtill.OutOfStockException;
 import io.github.davidg95.JTill.jtill.Product;
 import io.github.davidg95.JTill.jtill.ProductNotFoundException;
+import io.github.davidg95.JTill.jtill.RestrictionException;
 import io.github.davidg95.JTill.jtill.Sale;
 import io.github.davidg95.JTill.jtill.Screen;
 import io.github.davidg95.JTill.jtill.ScreenNotFoundException;
@@ -27,7 +30,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -62,8 +69,8 @@ public class GUI extends javax.swing.JFrame {
     /**
      * Creates new form GUI
      */
-    public GUI() {
-        sc = TillTouchClient.getServerConnection();
+    public GUI(ServerConnection sc) {
+        this.sc = sc;
         initComponents();
         model = (DefaultTableModel) tblProducts.getModel();
         lblHost.setText(TillTouchClient.HOST_NAME);
@@ -193,6 +200,7 @@ public class GUI extends javax.swing.JFrame {
                                 public void actionPerformed(ActionEvent e) {
                                     try {
                                         Product p = sc.getProduct(b.getProduct_id());
+                                        checkRestrictions(p);
                                         if (p.isOpen()) {
                                             double price = NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100;
                                             if (price > 0) {
@@ -210,6 +218,10 @@ public class GUI extends javax.swing.JFrame {
                                         }
                                     } catch (IOException | ProductNotFoundException | SQLException ex) {
                                         showError(ex);
+                                    } catch (CategoryNotFoundException ex) {
+                                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+                                    } catch (RestrictionException ex) {
+                                        TouchDialog.showMessageDialog(GUI.this, "Restriction", ex);
                                     }
                                 }
 
@@ -303,6 +315,32 @@ public class GUI extends javax.swing.JFrame {
             completeCurrentSale();
         } else {
             setTotalLabel(amountDue);
+        }
+    }
+
+    private void checkRestrictions(Product p) throws IOException, SQLException, CategoryNotFoundException, RestrictionException {
+        Category c = sc.getCategory(p.getCategoryID());
+        if (c.isTimeRestrict()) {
+            try {
+                Calendar now = Calendar.getInstance();
+                int hours = now.get(Calendar.HOUR_OF_DAY);
+                int minutes = now.get(Calendar.MINUTE);
+                SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+                Time timeNow = new Time(sdf.parse(hours + ":" + minutes + ":00").getTime());
+                System.out.println(timeNow);
+                if (timeNow.before(c.getStartSell())) {
+                    System.out.println("To early");
+                }
+                if (c.getStartSell().before(timeNow) && c.getEndSell().after(timeNow)) {
+                } else {
+                    throw new RestrictionException("This can only be sold between " + c.getStartSell() + " and " + c.getEndSell());
+                }
+            } catch (ParseException ex) {
+                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if (c.getMinAge() > 0) {
+            TouchDialog.showMessageDialog(this, "Age Restriction", "Check customer is over " + c.getMinAge());
         }
     }
 
@@ -904,6 +942,7 @@ public class GUI extends javax.swing.JFrame {
         try {
             String barcode = txtNumber.getText();
             Product p = sc.getProductByBarcode(barcode);
+            checkRestrictions(p);
             sale.addItem(p, quantity);
             setTotalLabel(sale.getTotal());
             setItemsLabel(sale.getItemCount());
@@ -911,6 +950,10 @@ public class GUI extends javax.swing.JFrame {
             txtNumber.setText("");
         } catch (IOException | ProductNotFoundException | SQLException ex) {
             TouchDialog.showMessageDialog(this, "Product Not Found", ex.getMessage());
+        } catch (CategoryNotFoundException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RestrictionException ex) {
+            TouchDialog.showMessageDialog(this, "Restriction", ex);
         }
     }//GEN-LAST:event_txtNumberActionPerformed
 

@@ -54,12 +54,11 @@ public class TillTouchClient {
             if (opt == JOptionPane.YES_OPTION) {
                 initialSetup();
                 saveProperties();
-                start();
             } else {
                 System.exit(0);
             }
         }
-        g = new GUI();
+        g = new GUI(sc);
     }
 
     public void start() {
