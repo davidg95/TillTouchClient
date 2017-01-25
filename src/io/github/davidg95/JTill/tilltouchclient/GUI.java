@@ -109,23 +109,6 @@ public class GUI extends javax.swing.JFrame {
         setItemsLabel(0);
     }
 
-    private void addToList(Product p) {
-        BigDecimal price = p.getPrice();
-        Object[] s;
-        if (price.compareTo(new BigDecimal("0")) > 1) {
-            DecimalFormat df = new DecimalFormat("#.00"); // Set your desired format here.
-            s = new Object[]{quantity, p.getShortName(), "£" + df.format(price.doubleValue() * quantity)};
-        } else {
-            DecimalFormat df = new DecimalFormat("0.00"); // Set your desired format here.
-            s = new Object[]{quantity, p.getShortName(), "£" + df.format(price.doubleValue() * quantity)};
-        }
-        //for (int i = 0; i < quantity; i++) {
-        model.addRow(s);
-        //}
-        quantity = 1;
-        btnQuantity.setText("Quantity: 1");
-    }
-
     private void updateList() {
         model.setRowCount(0);
         for (SaleItem item : sale.getSaleItems()) {
@@ -214,39 +197,13 @@ public class GUI extends javax.swing.JFrame {
                             pButton.addActionListener(new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                    try {
-                                        Product p = sc.getProduct(b.getProduct_id());
-                                        checkRestrictions(p);
-                                        if (p.isOpen()) {
-                                            BigDecimal price;
-                                            if (txtNumber.getText().equals("")) {
-                                                price = new BigDecimal(Double.toString(NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100));
-                                            } else {
-                                                price = new BigDecimal(Double.toString(Integer.parseInt(txtNumber.getText()) / 100));
-                                                txtNumber.setText("");
-                                            }
-                                            if (price.compareTo(BigDecimal.ZERO) > 0) {
-                                                p.setPrice(price);
-                                                sale.addItem(p, quantity);
-                                                setTotalLabel(sale.getTotal().doubleValue());
-                                                setItemsLabel(sale.getTotalItemCount());
-                                                updateList();
-                                            }
-                                        } else {
-                                            sale.addItem(p, quantity);
-                                            setTotalLabel(sale.getTotal().doubleValue());
-                                            setItemsLabel(sale.getTotalItemCount());
-                                            updateList();
+                                    new Thread() {
+                                        @Override
+                                        public void run() {
+                                            productButtonAction(b);
                                         }
-                                    } catch (IOException | ProductNotFoundException | SQLException ex) {
-                                        showError(ex);
-                                    } catch (CategoryNotFoundException ex) {
-                                        Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-                                    } catch (RestrictionException ex) {
-                                        TouchDialog.showMessageDialog(GUI.this, "Restriction", ex);
-                                    }
+                                    }.start();
                                 }
-
                             });
                             panel.add(pButton);
                         }
@@ -265,6 +222,40 @@ public class GUI extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, ex, "Error", JOptionPane.ERROR_MESSAGE);
         } catch (ScreenNotFoundException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void productButtonAction(Button b) {
+        try {
+            Product p = sc.getProduct(b.getProduct_id());
+            checkRestrictions(p);
+            if (p.isOpen()) {
+                BigDecimal price;
+                if (txtNumber.getText().equals("")) {
+                    price = new BigDecimal(Double.toString(NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100));
+                } else {
+                    price = new BigDecimal(Double.toString(Integer.parseInt(txtNumber.getText()) / 100));
+                    txtNumber.setText("");
+                }
+                if (price.compareTo(BigDecimal.ZERO) > 0) {
+                    p.setPrice(price);
+                    sale.addItem(p, quantity);
+                    setTotalLabel(sale.getTotal().doubleValue());
+                    setItemsLabel(sale.getTotalItemCount());
+                    updateList();
+                }
+            } else {
+                sale.addItem(p, quantity);
+                setTotalLabel(sale.getTotal().doubleValue());
+                setItemsLabel(sale.getTotalItemCount());
+                updateList();
+            }
+        } catch (IOException | ProductNotFoundException | SQLException ex) {
+            showError(ex);
+        } catch (CategoryNotFoundException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RestrictionException ex) {
+            TouchDialog.showMessageDialog(GUI.this, "Restriction", ex);
         }
     }
 
