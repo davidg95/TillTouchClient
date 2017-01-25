@@ -16,6 +16,7 @@ import io.github.davidg95.JTill.jtill.Product;
 import io.github.davidg95.JTill.jtill.ProductNotFoundException;
 import io.github.davidg95.JTill.jtill.RestrictionException;
 import io.github.davidg95.JTill.jtill.Sale;
+import io.github.davidg95.JTill.jtill.SaleItem;
 import io.github.davidg95.JTill.jtill.Screen;
 import io.github.davidg95.JTill.jtill.ScreenNotFoundException;
 import io.github.davidg95.JTill.jtill.ServerConnection;
@@ -125,6 +126,22 @@ public class GUI extends javax.swing.JFrame {
         btnQuantity.setText("Quantity: 1");
     }
 
+    private void updateList() {
+        model.setRowCount(0);
+        for (SaleItem item : sale.getSaleItems()) {
+            DecimalFormat df;
+            if (item.getPrice().compareTo(BigDecimal.ZERO) > 1) {
+                df = new DecimalFormat("#.00");
+            } else {
+                df = new DecimalFormat("0.00");
+            }
+            Object[] s = new Object[]{item.getQuantity(), item.getProduct().getShortName(), df.format(item.getPrice().doubleValue())};
+            model.addRow(s);
+        }
+        quantity = 1;
+        btnQuantity.setText("Quantity: 1");
+    }
+
     private void clearList() {
         model.setRowCount(0);
     }
@@ -208,18 +225,18 @@ public class GUI extends javax.swing.JFrame {
                                                 price = new BigDecimal(Double.toString(Integer.parseInt(txtNumber.getText()) / 100));
                                                 txtNumber.setText("");
                                             }
-                                            if (price.longValueExact() > 0) {
+                                            if (price.compareTo(BigDecimal.ZERO) > 0) {
                                                 p.setPrice(price);
                                                 sale.addItem(p, quantity);
                                                 setTotalLabel(sale.getTotal().doubleValue());
-                                                setItemsLabel(sale.getItemCount());
-                                                addToList(p);
+                                                setItemsLabel(sale.getTotalItemCount());
+                                                updateList();
                                             }
                                         } else {
                                             sale.addItem(p, quantity);
                                             setTotalLabel(sale.getTotal().doubleValue());
-                                            setItemsLabel(sale.getItemCount());
-                                            addToList(p);
+                                            setItemsLabel(sale.getTotalItemCount());
+                                            updateList();
                                         }
                                     } catch (IOException | ProductNotFoundException | SQLException ex) {
                                         showError(ex);
@@ -310,9 +327,9 @@ public class GUI extends javax.swing.JFrame {
     private void addMoney(double val) {
         amountDue -= val;
         if (amountDue <= 0) {
-            for (int p : sale.getProducts()) {
+            for (SaleItem item : sale.getSaleItems()) {
                 try {
-                    sc.purchaseProduct(p);
+                    sc.purchaseProduct(item.getProduct().getProductCode(), item.getQuantity());
                 } catch (IOException | ProductNotFoundException | SQLException | OutOfStockException ex) {
 
                 }
@@ -1005,8 +1022,8 @@ public class GUI extends javax.swing.JFrame {
             checkRestrictions(p);
             sale.addItem(p, quantity);
             setTotalLabel(sale.getTotal().longValueExact());
-            setItemsLabel(sale.getItemCount());
-            addToList(p);
+            setItemsLabel(sale.getTotalItemCount());
+            updateList();
             txtNumber.setText("");
         } catch (IOException | ProductNotFoundException | SQLException ex) {
             TouchDialog.showMessageDialog(this, "Product Not Found", ex.getMessage());
@@ -1041,26 +1058,37 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnExitActionPerformed
 
     private void btnExactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExactActionPerformed
-        if (sale.getProducts().isEmpty()) {
-            TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
-        } else {
-            for (int p : sale.getProducts()) {
-                try {
-                    sc.purchaseProduct(p);
-                } catch (IOException | ProductNotFoundException | SQLException | OutOfStockException ex) {
-
-                }
+        new Thread() {
+            @Override
+            public void run() {
+                addMoney(sale.getTotal().doubleValue());
             }
-            completeCurrentSale();
-        }
+        }.start();
+//        if (sale.getSaleItems().isEmpty()) {
+//            TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
+//        } else {
+//            for (SaleItem p : sale.getSaleItems()) {
+//                try {
+//                    sc.purchaseProduct(p.getProduct().getProductCode(), p.getQuantity());
+//                } catch (IOException | ProductNotFoundException | SQLException | OutOfStockException ex) {
+//
+//                }
+//            }
+//            completeCurrentSale();
+//        }
     }//GEN-LAST:event_btnExactActionPerformed
 
     private void btnCustomValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCustomValueActionPerformed
-        if (sale.getProducts().isEmpty()) {
+        if (sale.getSaleItems().isEmpty()) {
             TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
         } else {
             double val = NumberEntry.showNumberEntryDialog(this, "Enter Amount") / 100;
-            addMoney(val);
+            new Thread() {
+                @Override
+                public void run() {
+                    addMoney(val);
+                }
+            }.start();
         }
     }//GEN-LAST:event_btnCustomValueActionPerformed
 
@@ -1090,41 +1118,61 @@ public class GUI extends javax.swing.JFrame {
         try {
             Product p = sc.getProductByBarcode(txtNumber.getText());
             sale.addItem(p, quantity);
-            addToList(p);
+            updateList();
         } catch (IOException | ProductNotFoundException | SQLException ex) {
             showError(ex);
         }
     }//GEN-LAST:event_btnEnterActionPerformed
 
     private void btn£5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn£5ActionPerformed
-        if (sale.getProducts().isEmpty()) {
+        if (sale.getSaleItems().isEmpty()) {
             TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
         } else {
-            addMoney(5);
+            new Thread() {
+                @Override
+                public void run() {
+                    addMoney(5);
+                }
+            }.start();
         }
     }//GEN-LAST:event_btn£5ActionPerformed
 
     private void btn£10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn£10ActionPerformed
-        if (sale.getProducts().isEmpty()) {
+        if (sale.getSaleItems().isEmpty()) {
             TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
         } else {
-            addMoney(10);
+            new Thread() {
+                @Override
+                public void run() {
+                    addMoney(10);
+                }
+            }.start();
         }
     }//GEN-LAST:event_btn£10ActionPerformed
 
     private void btn£20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn£20ActionPerformed
-        if (sale.getProducts().isEmpty()) {
+        if (sale.getSaleItems().isEmpty()) {
             TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
         } else {
-            addMoney(20);
+            new Thread() {
+                @Override
+                public void run() {
+                    addMoney(20);
+                }
+            }.start();
         }
     }//GEN-LAST:event_btn£20ActionPerformed
 
     private void btn£50ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn£50ActionPerformed
-        if (sale.getProducts().isEmpty()) {
+        if (sale.getSaleItems().isEmpty()) {
             TouchDialog.showMessageDialog(this, "Sale", "Not in a sale");
         } else {
-            addMoney(50);
+            new Thread() {
+                @Override
+                public void run() {
+                    addMoney(50);
+                }
+            }.start();
         }
     }//GEN-LAST:event_btn£50ActionPerformed
 
