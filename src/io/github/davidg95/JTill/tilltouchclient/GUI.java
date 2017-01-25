@@ -171,6 +171,37 @@ public class GUI extends javax.swing.JFrame {
         login();
     }
 
+    private void addProduct(Product p) {
+        try {
+            checkRestrictions(p);
+            if (p.isOpen()) {
+                BigDecimal price;
+                if (txtNumber.getText().equals("")) {
+                    price = new BigDecimal(Double.toString(NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100));
+                } else {
+                    price = new BigDecimal(Double.toString(Integer.parseInt(txtNumber.getText()) / 100));
+                    txtNumber.setText("");
+                }
+                if (price.compareTo(BigDecimal.ZERO) > 0) {
+                    p.setPrice(price);
+                    sale.addItem(p, quantity);
+                    setTotalLabel(sale.getTotal().doubleValue());
+                    setItemsLabel(sale.getTotalItemCount());
+                    updateList();
+                }
+            } else {
+                sale.addItem(p, quantity);
+                setTotalLabel(sale.getTotal().doubleValue());
+                setItemsLabel(sale.getTotalItemCount());
+                updateList();
+            }
+        } catch (IOException | SQLException | CategoryNotFoundException ex) {
+            showError(ex);
+        } catch (RestrictionException ex) {
+            TouchDialog.showMessageDialog(GUI.this, "Restriction", ex);
+        }
+    }
+
     public void addScreenButton(Screen s) {
         JToggleButton cButton = new JToggleButton(s.getName());
         if (s.getColorValue() != 0) {
@@ -236,34 +267,11 @@ public class GUI extends javax.swing.JFrame {
     private void productButtonAction(Button b) {
         try {
             Product p = sc.getProduct(b.getProduct_id());
-            checkRestrictions(p);
-            if (p.isOpen()) {
-                BigDecimal price;
-                if (txtNumber.getText().equals("")) {
-                    price = new BigDecimal(Double.toString(NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100));
-                } else {
-                    price = new BigDecimal(Double.toString(Integer.parseInt(txtNumber.getText()) / 100));
-                    txtNumber.setText("");
-                }
-                if (price.compareTo(BigDecimal.ZERO) > 0) {
-                    p.setPrice(price);
-                    sale.addItem(p, quantity);
-                    setTotalLabel(sale.getTotal().doubleValue());
-                    setItemsLabel(sale.getTotalItemCount());
-                    updateList();
-                }
-            } else {
-                sale.addItem(p, quantity);
-                setTotalLabel(sale.getTotal().doubleValue());
-                setItemsLabel(sale.getTotalItemCount());
-                updateList();
-            }
-        } catch (IOException | ProductNotFoundException | SQLException ex) {
+            addProduct(p);
+        } catch (IOException | SQLException ex) {
             showError(ex);
-        } catch (CategoryNotFoundException ex) {
-            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RestrictionException ex) {
-            TouchDialog.showMessageDialog(GUI.this, "Restriction", ex);
+        } catch (ProductNotFoundException ex) {
+            TouchDialog.showMessageDialog(this, "Product", ex);
         }
     }
 
@@ -1046,18 +1054,10 @@ public class GUI extends javax.swing.JFrame {
         try {
             String barcode = txtNumber.getText();
             Product p = sc.getProductByBarcode(barcode);
-            checkRestrictions(p);
-            sale.addItem(p, quantity);
-            setTotalLabel(sale.getTotal().doubleValue());
-            setItemsLabel(sale.getTotalItemCount());
-            updateList();
+            addProduct(p);
             txtNumber.setText("");
         } catch (IOException | ProductNotFoundException | SQLException ex) {
             TouchDialog.showMessageDialog(this, "Product Not Found", ex.getMessage());
-        } catch (CategoryNotFoundException ex) {
-            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (RestrictionException ex) {
-            TouchDialog.showMessageDialog(this, "Restriction", ex);
         }
     }//GEN-LAST:event_txtNumberActionPerformed
 
@@ -1269,14 +1269,9 @@ public class GUI extends javax.swing.JFrame {
                 TouchDialog.showMessageDialog(this, "Lookup", "No matches found");
             } else {
                 Product p = ProductSelectDialog.showDialog(this, products);
-                sale.addItem(p, quantity);
-                setTotalLabel(sale.getTotal().doubleValue());
-                setItemsLabel(sale.getTotalItemCount());
-                updateList();
+                addProduct(p);
             }
-        } catch (IOException ex) {
-            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
+        } catch (IOException | SQLException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
