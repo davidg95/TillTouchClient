@@ -185,24 +185,24 @@ public class GUI extends javax.swing.JFrame {
 
     private void addProduct(Product p) {
 //        try {
-            //checkRestrictions(p);
-            if (p.isOpen()) {
-                BigDecimal price;
-                if (txtNumber.getText().equals("")) {
-                    price = new BigDecimal(Double.toString(NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100));
-                } else {
-                    price = new BigDecimal(Double.toString(Integer.parseInt(txtNumber.getText()) / 100));
-                    txtNumber.setText("");
-                }
-                if (price.compareTo(BigDecimal.ZERO) > 0) {
-                    p.setPrice(price);
-                    lastAdded = sale.addItem(p, quantity);
-                    updateList();
-                }
+        //checkRestrictions(p);
+        if (p.isOpen()) {
+            BigDecimal price;
+            if (txtNumber.getText().equals("")) {
+                price = new BigDecimal(Double.toString(NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100));
             } else {
+                price = new BigDecimal(Double.toString(Integer.parseInt(txtNumber.getText()) / 100));
+                txtNumber.setText("");
+            }
+            if (price.compareTo(BigDecimal.ZERO) > 0) {
+                p.setPrice(price);
                 lastAdded = sale.addItem(p, quantity);
                 updateList();
             }
+        } else {
+            lastAdded = sale.addItem(p, quantity);
+            updateList();
+        }
 //        } catch (IOException | SQLException | CategoryNotFoundException ex) {
 //            showError(ex);
 //        } catch (RestrictionException ex) {
@@ -1179,12 +1179,12 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCustomValueActionPerformed
 
     private void btnAddCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCustomerActionPerformed
-        if (sale.getCustomer() == -1) {
+        if (sale.getCustomer() == null) {
             int customerID = (int) NumberEntry.showNumberEntryDialog(this, "Enter Customer ID");
             if (customerID > 0) {
                 try {
                     Customer c = sc.getCustomer(customerID);
-                    sale.setCustomer(c.getId());
+                    sale.setCustomer(c);
                     lblCustomer.setText("Customer: " + c.getName());
                     btnAddCustomer.setText("Remove Customer");
                     btnAddCustomer.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
@@ -1193,7 +1193,7 @@ public class GUI extends javax.swing.JFrame {
                 }
             }
         } else {
-            sale.setCustomer(-1);
+            sale.setCustomer(null);
             btnAddCustomer.setText("Add Customer");
             btnAddCustomer.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
             lblCustomer.setText("No Customer");
