@@ -38,11 +38,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -69,6 +67,8 @@ public class GUI extends javax.swing.JFrame {
     private final CardLayout categoryCards;
     private final CardLayout screenCards;
     private final ButtonGroup cardsButonGroup;
+
+    private SaleItem lastAdded;
 
     /**
      * Creates new form GUI
@@ -131,6 +131,8 @@ public class GUI extends javax.swing.JFrame {
         }
         quantity = 1;
         btnQuantity.setText("Quantity: 1");
+        setTotalLabel(sale.getTotal().doubleValue());
+        setItemsLabel(sale.getTotalItemCount());
     }
 
     private void clearList() {
@@ -184,15 +186,11 @@ public class GUI extends javax.swing.JFrame {
                 }
                 if (price.compareTo(BigDecimal.ZERO) > 0) {
                     p.setPrice(price);
-                    sale.addItem(p, quantity);
-                    setTotalLabel(sale.getTotal().doubleValue());
-                    setItemsLabel(sale.getTotalItemCount());
+                    lastAdded = sale.addItem(p, quantity);
                     updateList();
                 }
             } else {
-                sale.addItem(p, quantity);
-                setTotalLabel(sale.getTotal().doubleValue());
-                setItemsLabel(sale.getTotalItemCount());
+                lastAdded = sale.addItem(p, quantity);
                 updateList();
             }
         } catch (IOException | SQLException | CategoryNotFoundException ex) {
@@ -415,6 +413,8 @@ public class GUI extends javax.swing.JFrame {
         btnComplete = new javax.swing.JButton();
         btnLookup = new javax.swing.JButton();
         btnQuantity = new javax.swing.JButton();
+        btnVoid = new javax.swing.JButton();
+        btnVoidSelected = new javax.swing.JButton();
         panelPayment = new javax.swing.JPanel();
         btnBack = new javax.swing.JButton();
         lblTotalDue = new javax.swing.JLabel();
@@ -760,6 +760,20 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        btnVoid.setText("Void Last");
+        btnVoid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoidActionPerformed(evt);
+            }
+        });
+
+        btnVoidSelected.setText("Void Selected");
+        btnVoidSelected.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoidSelectedActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelMainScreenLayout = new javax.swing.GroupLayout(panelMainScreen);
         panelMainScreen.setLayout(panelMainScreenLayout);
         panelMainScreenLayout.setHorizontalGroup(
@@ -778,7 +792,12 @@ public class GUI extends javax.swing.JFrame {
                                 .addComponent(lblTotal)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(lblItems, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(btnQuantity)))
+                            .addGroup(panelMainScreenLayout.createSequentialGroup()
+                                .addComponent(btnQuantity)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnVoid)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnVoidSelected))))
                     .addComponent(topPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelMainScreenLayout.createSequentialGroup()
                         .addContainerGap()
@@ -804,7 +823,10 @@ public class GUI extends javax.swing.JFrame {
                             .addComponent(lblTotal, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(lblItems, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(panelMainScreenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnQuantity, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
+                            .addComponent(btnVoid, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnVoidSelected, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(panelNumberEntry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1269,13 +1291,32 @@ public class GUI extends javax.swing.JFrame {
                 TouchDialog.showMessageDialog(this, "Lookup", "No matches found");
             } else {
                 Product p = ProductSelectDialog.showDialog(this, products);
-                addProduct(p);
+                if (p != null) {
+                    addProduct(p);
+                }
             }
         } catch (IOException | SQLException ex) {
             Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }//GEN-LAST:event_btnLookupActionPerformed
+
+    private void btnVoidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoidActionPerformed
+        if (lastAdded != null) {
+            sale.voidItem(lastAdded);
+            lastAdded = null;
+            updateList();
+        }
+    }//GEN-LAST:event_btnVoidActionPerformed
+
+    private void btnVoidSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoidSelectedActionPerformed
+        int index = tblProducts.getSelectedRow();
+        if (index > -1) {
+            SaleItem item = sale.getSaleItems().get(index);
+            sale.voidItem(item);
+            updateList();
+        }
+    }//GEN-LAST:event_btnVoidSelectedActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel CardsPanel;
@@ -1305,6 +1346,8 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton btnLogOut;
     private javax.swing.JButton btnLookup;
     private javax.swing.JButton btnQuantity;
+    private javax.swing.JButton btnVoid;
+    private javax.swing.JButton btnVoidSelected;
     private javax.swing.JButton btn£10;
     private javax.swing.JButton btn£20;
     private javax.swing.JButton btn£5;
