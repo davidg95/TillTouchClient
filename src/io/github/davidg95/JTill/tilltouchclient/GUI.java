@@ -121,6 +121,9 @@ public class GUI extends javax.swing.JFrame {
         clearList();
         setTotalLabel(0);
         setItemsLabel(0);
+        btnAddCustomer.setText("Add Customer");
+        btnAddCustomer.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        lblCustomer.setText("No Customer");
         paymentsModel.clear();
         if (cardsButonGroup.getElements().hasMoreElements()) {
             cardsButonGroup.getElements().nextElement().doClick();
