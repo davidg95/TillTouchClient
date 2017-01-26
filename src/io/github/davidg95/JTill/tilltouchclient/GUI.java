@@ -194,7 +194,7 @@ public class GUI extends javax.swing.JFrame {
             if (txtNumber.getText().equals("")) {
                 price = new BigDecimal(Double.toString(NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100));
             } else {
-                price = new BigDecimal(Double.toString(Integer.parseInt(txtNumber.getText()) / 100));
+                price = new BigDecimal(Double.toString(Double.parseDouble(txtNumber.getText()) / 100));
                 txtNumber.setText("");
             }
             if (price.compareTo(BigDecimal.ZERO) > 0) {
