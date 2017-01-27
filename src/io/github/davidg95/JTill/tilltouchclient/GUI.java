@@ -124,6 +124,7 @@ public class GUI extends javax.swing.JFrame {
         btnAddCustomer.setText("Add Customer");
         btnAddCustomer.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         lblCustomer.setText("No Customer");
+        btnCharge.setEnabled(false);
         paymentsModel.clear();
         if (cardsButonGroup.getElements().hasMoreElements()) {
             cardsButonGroup.getElements().nextElement().doClick();
@@ -450,6 +451,7 @@ public class GUI extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         lstPayments = new javax.swing.JList<>();
         btnVoidPayment = new javax.swing.JButton();
+        btnCharge = new javax.swing.JButton();
         panelLogin = new javax.swing.JPanel();
         panelStaff = new javax.swing.JPanel();
         btnLogIn = new javax.swing.JButton();
@@ -965,6 +967,16 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        btnCharge.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        btnCharge.setText("Charge");
+        btnCharge.setEnabled(false);
+        btnCharge.setPreferredSize(new java.awt.Dimension(130, 130));
+        btnCharge.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChargeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelPaymentLayout = new javax.swing.GroupLayout(panelPayment);
         panelPayment.setLayout(panelPaymentLayout);
         panelPaymentLayout.setHorizontalGroup(
@@ -1010,7 +1022,8 @@ public class GUI extends javax.swing.JFrame {
                                     .addGroup(panelPaymentLayout.createSequentialGroup()
                                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(btnVoidPayment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                        .addComponent(btnVoidPayment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(btnCharge, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 36, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -1046,7 +1059,9 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(lblTotalDue)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblCustomer)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 157, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCharge, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
                 .addComponent(btnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1191,6 +1206,7 @@ public class GUI extends javax.swing.JFrame {
                     lblCustomer.setText("Customer: " + c.getName());
                     btnAddCustomer.setText("Remove Customer");
                     btnAddCustomer.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+                    btnCharge.setEnabled(true);
                 } catch (IOException | CustomerNotFoundException | SQLException ex) {
                     TouchDialog.showMessageDialog(this, "Error", ex);
                 }
@@ -1200,6 +1216,7 @@ public class GUI extends javax.swing.JFrame {
             btnAddCustomer.setText("Add Customer");
             btnAddCustomer.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
             lblCustomer.setText("No Customer");
+            btnCharge.setEnabled(false);
         }
     }//GEN-LAST:event_btnAddCustomerActionPerformed
 
@@ -1375,6 +1392,16 @@ public class GUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnVoidPaymentActionPerformed
 
+    private void btnChargeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChargeActionPerformed
+        sale.setChargeAccount(true);
+        new Thread() {
+            @Override
+            public void run() {
+                addMoney(amountDue);
+            }
+        }.start();
+    }//GEN-LAST:event_btnChargeActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel CardsPanel;
     private javax.swing.JButton btn0;
@@ -1392,6 +1419,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton btnAddDiscount;
     private javax.swing.JButton btnBack;
     private javax.swing.JButton btnCardPayment;
+    private javax.swing.JButton btnCharge;
     private javax.swing.JButton btnCheque;
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnComplete;
