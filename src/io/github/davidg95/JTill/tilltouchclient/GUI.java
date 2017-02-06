@@ -176,7 +176,7 @@ public class GUI extends javax.swing.JFrame {
 
     public void logout() {
         try {
-            sc.tillLogout(staff.getId());
+            sc.tillLogout(staff);
             lblStaff.setText("Not Logged In");
             staff = null;
         } catch (IOException ex) {
@@ -200,11 +200,13 @@ public class GUI extends javax.swing.JFrame {
             }
             if (price.compareTo(BigDecimal.ZERO) > 0) {
                 p.setPrice(price);
-                lastAdded = sale.addItem(p, quantity);
+                sale.addItem(p, quantity);
+                lastAdded = sale.getLastAdded();
                 updateList();
             }
         } else {
-            lastAdded = sale.addItem(p, quantity);
+            sale.addItem(p, quantity);
+            lastAdded = sale.getLastAdded();
             updateList();
         }
 //        } catch (IOException | SQLException | CategoryNotFoundException ex) {
@@ -277,14 +279,8 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void productButtonAction(Button b) {
-        try {
-            Product p = sc.getProduct(b.getProduct_id());
-            addProduct(p);
-        } catch (IOException | SQLException ex) {
-            ex.printStackTrace();
-        } catch (ProductNotFoundException ex) {
-            TouchDialog.showMessageDialog(this, "Product", ex);
-        }
+        Product p = b.getProduct();
+        addProduct(p);
     }
 
     private void addStaffButton(Staff s) {
