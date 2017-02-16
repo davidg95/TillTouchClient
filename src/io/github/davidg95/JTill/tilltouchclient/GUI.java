@@ -5,7 +5,7 @@
  */
 package io.github.davidg95.JTill.tilltouchclient;
 
-import io.github.davidg95.JTill.jtill.Button;
+import io.github.davidg95.JTill.jtill.TillButton;
 import io.github.davidg95.JTill.jtill.Category;
 import io.github.davidg95.JTill.jtill.CategoryNotFoundException;
 import io.github.davidg95.JTill.jtill.Customer;
@@ -116,7 +116,7 @@ public class GUI extends javax.swing.JFrame {
 
     private void newSale() {
         screenCards.show(CardsPanel, "cardMain");
-        sale = new Sale();
+        sale = new Sale(TillTouchClient.HOST_NAME, staff);
         amountDue = 0;
         clearList();
         setTotalLabel(0);
@@ -140,7 +140,7 @@ public class GUI extends javax.swing.JFrame {
             } else {
                 df = new DecimalFormat("0.00");
             }
-            Object[] s = new Object[]{item.getQuantity(), item.getProduct().getShortName(), df.format(item.getPrice().doubleValue())};
+            Object[] s = new Object[]{item.getQuantity(), item.getItem().getName(), df.format(item.getPrice().doubleValue())};
             model.addRow(s);
         }
         quantity = 1;
@@ -233,35 +233,33 @@ public class GUI extends javax.swing.JFrame {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(10, 5));
 
-        List<Button> buttons;
+        List<TillButton> buttons;
         try {
             buttons = sc.getButtonsOnScreen(s);
             for (int i = 0; i < buttons.size(); i++) {
-                for (Button b : buttons) {
-                    if (b.getOrder() == i) {
-                        JButton pButton = new JButton(b.getName());
-                        if (b.getName().equals("[SPACE]")) {
-                            panel.add(new JPanel());
-                        } else {
-                            if (b.getColorValue() != 0) {
-                                pButton.setBackground(new Color(b.getColorValue()));
-                            }
-                            //pButton.setSize(140, 50);
-                            pButton.addActionListener(new ActionListener() {
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-                                    new Thread() {
-                                        @Override
-                                        public void run() {
-                                            productButtonAction(b);
-                                        }
-                                    }.start();
-                                }
-                            });
-                            panel.add(pButton);
+                for (TillButton b : buttons) {
+                    JButton pButton = new JButton(b.getName());
+                    if (b.getName().equals("[SPACE]")) {
+                        panel.add(new JPanel());
+                    } else {
+                        if (b.getColorValue() != 0) {
+                            pButton.setBackground(new Color(b.getColorValue()));
                         }
-                        break;
+                        //pButton.setSize(140, 50);
+                        pButton.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                new Thread() {
+                                    @Override
+                                    public void run() {
+                                        productButtonAction(b);
+                                    }
+                                }.start();
+                            }
+                        });
+                        panel.add(pButton);
                     }
+                    break;
                 }
             }
 
@@ -278,7 +276,7 @@ public class GUI extends javax.swing.JFrame {
         }
     }
 
-    private void productButtonAction(Button b) {
+    private void productButtonAction(TillButton b) {
         Product p = b.getProduct();
         addProduct(p);
     }
@@ -313,7 +311,7 @@ public class GUI extends javax.swing.JFrame {
 
     private void completeCurrentSale() {
         try {
-            sale.setTime(new Date().getTime());
+            sale.setTime(new Time(System.currentTimeMillis()));
             sc.addSale(sale);
         } catch (IOException ex) {
         }
@@ -348,7 +346,7 @@ public class GUI extends javax.swing.JFrame {
         if (amountDue <= 0) {
             for (SaleItem item : sale.getSaleItems()) {
                 try {
-                    sc.purchaseProduct(item.getProduct().getProductCode(), item.getQuantity());
+                    sc.purchaseProduct(item.getItem().getId(), item.getQuantity());
                 } catch (IOException | ProductNotFoundException | SQLException | OutOfStockException ex) {
 
                 }
