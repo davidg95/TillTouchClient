@@ -303,7 +303,6 @@ public class GUI extends javax.swing.JFrame {
             staff = sc.tillLogin(s.getId());
             lblStaff.setText(staff.getName());
             screenCards.show(CardsPanel, "cardMain");
-            return;
         } catch (IOException | LoginException | SQLException ex) {
             JOptionPane.showMessageDialog(this, ex, "Logon Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -313,7 +312,7 @@ public class GUI extends javax.swing.JFrame {
         try {
             sale.setTime(new Time(System.currentTimeMillis()));
             sc.addSale(sale);
-        } catch (IOException ex) {
+        } catch (IOException | SQLException ex) {
         }
         if (amountDue < 0) {
             if (amountDue > 1) {
