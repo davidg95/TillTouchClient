@@ -22,7 +22,6 @@ import io.github.davidg95.JTill.jtill.ScreenNotFoundException;
 import io.github.davidg95.JTill.jtill.ServerConnection;
 import io.github.davidg95.JTill.jtill.Staff;
 import io.github.davidg95.JTill.jtill.StaffNotFoundException;
-import io.github.davidg95.JTill.jtill.TillInitData;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -327,8 +326,12 @@ public class GUI extends javax.swing.JFrame {
             }
         }
         newSale();
-        if (TillInitData.initData.autoLogout) {
-            logout();
+        try {
+            if (sc.getSettings("AUTO_LOGOUT").equals("TRUE")) {
+                logout();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
