@@ -357,7 +357,7 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void checkRestrictions(Product p) throws IOException, SQLException, CategoryNotFoundException, RestrictionException {
-        Category c = sc.getCategory(p.getCategoryID());
+        Category c = p.getCategory();
         if (c.isTimeRestrict()) {
             try {
                 Calendar now = Calendar.getInstance();
