@@ -46,7 +46,7 @@ public class TillTouchClient {
         icon = new javax.swing.ImageIcon(getClass().getResource("/io/github/davidg95/JTill/resources/tillIcon.png")).getImage();
         loadProperties();
         try {
-            sc = new ServerConnection(HOST_NAME);
+            sc = new ServerConnection();
             sc.connect(SERVER_ADDRESS, PORT, HOST_NAME);
         } catch (IOException ex) {
             int opt = JOptionPane.showOptionDialog(null, "Error connecting to server " + SERVER_ADDRESS + " on port " + PORT + "\nTry again?", "Connection Error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, new javax.swing.ImageIcon(getClass().getResource("/io/github/davidg95/JTill/resources/tillIcon.png")), null, null);
@@ -62,8 +62,8 @@ public class TillTouchClient {
 
     public void start() {
         g.setVisible(true);
-        g.setButtons();
         g.login();
+        g.setButtons();
     }
 
     public static ServerConnection getServerConnection() {
