@@ -5,7 +5,6 @@
  */
 package io.github.davidg95.JTill.tilltouchclient;
 
-import io.github.davidg95.JTill.jtill.DataConnectInterface;
 import io.github.davidg95.JTill.jtill.Product;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -18,6 +17,7 @@ import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import io.github.davidg95.JTill.jtill.DataConnect;
 
 /**
  * Dialog which allows a product to be selected.

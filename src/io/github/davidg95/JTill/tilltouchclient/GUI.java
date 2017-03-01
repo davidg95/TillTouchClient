@@ -309,7 +309,7 @@ public class GUI extends javax.swing.JFrame {
 
     private void completeCurrentSale() {
         try {
-            sale.setTime(new Time(System.currentTimeMillis()));
+            sale.setDate(new Time(System.currentTimeMillis()));
             sc.addSale(sale);
         } catch (IOException | SQLException ex) {
         }
