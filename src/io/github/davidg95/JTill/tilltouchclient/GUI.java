@@ -1163,7 +1163,10 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLogInActionPerformed
 
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
-        sc.close();
+        try {
+            sc.close();
+        } catch (IOException ex) {
+        }
         System.exit(0);
     }//GEN-LAST:event_btnExitActionPerformed
 
