@@ -5,23 +5,7 @@
  */
 package io.github.davidg95.JTill.tilltouchclient;
 
-import io.github.davidg95.JTill.jtill.TillButton;
-import io.github.davidg95.JTill.jtill.Category;
-import io.github.davidg95.JTill.jtill.CategoryNotFoundException;
-import io.github.davidg95.JTill.jtill.Customer;
-import io.github.davidg95.JTill.jtill.CustomerNotFoundException;
-import io.github.davidg95.JTill.jtill.LoginException;
-import io.github.davidg95.JTill.jtill.OutOfStockException;
-import io.github.davidg95.JTill.jtill.Product;
-import io.github.davidg95.JTill.jtill.ProductNotFoundException;
-import io.github.davidg95.JTill.jtill.RestrictionException;
-import io.github.davidg95.JTill.jtill.Sale;
-import io.github.davidg95.JTill.jtill.SaleItem;
-import io.github.davidg95.JTill.jtill.Screen;
-import io.github.davidg95.JTill.jtill.ScreenNotFoundException;
-import io.github.davidg95.JTill.jtill.ServerConnection;
-import io.github.davidg95.JTill.jtill.Staff;
-import io.github.davidg95.JTill.jtill.StaffNotFoundException;
+import io.github.davidg95.JTill.jtill.*;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,7 +21,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -186,10 +169,8 @@ public class GUI extends javax.swing.JFrame {
         login();
     }
 
-    private void addProduct(Product p) {
-//        try {
-        //checkRestrictions(p);
-        if (p.isOpen()) {
+    private void addProduct(Item i) {
+        if (i.isOpen()) {
             BigDecimal price;
             if (txtNumber.getText().equals("")) {
                 price = new BigDecimal(Double.toString(NumberEntry.showNumberEntryDialog(GUI.this, "Enter Price") / 100));
@@ -198,13 +179,13 @@ public class GUI extends javax.swing.JFrame {
                 txtNumber.setText("");
             }
             if (price.compareTo(BigDecimal.ZERO) > 0) {
-                p.setPrice(price);
-                sale.addItem(p, quantity);
+                i.setPrice(price);
+                sale.addItem(i, quantity);
                 lastAdded = sale.getLastAdded();
                 updateList();
             }
         } else {
-            sale.addItem(p, quantity);
+            sale.addItem(i, quantity);
             lastAdded = sale.getLastAdded();
             updateList();
         }
@@ -276,8 +257,8 @@ public class GUI extends javax.swing.JFrame {
     }
 
     private void productButtonAction(TillButton b) {
-        Product p = b.getProduct();
-        addProduct(p);
+        Item i = b.getItem();
+        addProduct(i);
     }
 
     private void addStaffButton(Staff s) {
