@@ -36,7 +36,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author David
  */
-public class GUI extends javax.swing.JFrame {
+public class GUI extends javax.swing.JFrame implements GUIInterface{
 
     private final ServerConnection sc;
 
@@ -56,7 +56,7 @@ public class GUI extends javax.swing.JFrame {
 
     private final DefaultListModel paymentsModel;
 
-    private List<Double> payments;
+    private final List<Double> payments;
 
     /**
      * Creates new form GUI
@@ -1443,4 +1443,42 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JPanel topPanel;
     private javax.swing.JTextField txtNumber;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void log(Object o) {
+    }
+
+    @Override
+    public void setClientLabel(String text) {
+    }
+
+    @Override
+    public void showMessage(String title, String message) {
+    }
+
+    @Override
+    public boolean showYesNoMessage(String title, String message) {
+        return JOptionPane.showConfirmDialog(this, message) == JOptionPane.YES_OPTION;
+    }
+
+    @Override
+    public void showModalMessage(String title, String message) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.PLAIN_MESSAGE);
+    }
+
+    @Override
+    public void hideModalMessage() {
+    }
+
+    @Override
+    public void addTill(Till t) {
+    }
+
+    @Override
+    public void allow() {
+    }
+
+    @Override
+    public void disallow() {
+    }
 }
