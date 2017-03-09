@@ -36,7 +36,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author David
  */
-public class GUI extends javax.swing.JFrame implements GUIInterface{
+public class GUI extends javax.swing.JFrame implements GUIInterface {
 
     private final ServerConnection sc;
 
@@ -329,7 +329,7 @@ public class GUI extends javax.swing.JFrame implements GUIInterface{
         if (amountDue <= 0) {
             for (SaleItem item : sale.getSaleItems()) {
                 try {
-                    sc.purchaseProduct(item.getItem().getId(), item.getQuantity());
+                    sc.purchaseProduct((Product) item.getItem(), item.getQuantity());
                 } catch (IOException | ProductNotFoundException | SQLException | OutOfStockException ex) {
 
                 }
@@ -1446,6 +1446,10 @@ public class GUI extends javax.swing.JFrame implements GUIInterface{
 
     @Override
     public void log(Object o) {
+    }
+
+    @Override
+    public void logWarning(Object o) {
     }
 
     @Override
