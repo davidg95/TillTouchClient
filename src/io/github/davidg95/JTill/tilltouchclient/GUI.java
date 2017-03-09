@@ -308,7 +308,7 @@ public class GUI extends javax.swing.JFrame implements GUIInterface {
         }
         newSale();
         try {
-            if (sc.getSettings("AUTO_LOGOUT").equals("TRUE")) {
+            if (sc.getSetting("AUTO_LOGOUT").equals("TRUE")) {
                 logout();
             }
         } catch (IOException ex) {
