@@ -1485,4 +1485,8 @@ public class GUI extends javax.swing.JFrame implements GUIInterface {
     @Override
     public void disallow() {
     }
+
+    @Override
+    public void updateTills() {
+    }
 }
