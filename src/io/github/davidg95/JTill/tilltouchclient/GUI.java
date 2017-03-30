@@ -98,7 +98,7 @@ public class GUI extends javax.swing.JFrame implements GUIInterface {
 
     private void newSale() {
         screenCards.show(CardsPanel, "cardMain");
-        sale = new Sale(TillTouchClient.HOST_NAME, staff);
+        sale = new Sale(TillTouchClient.HOST_NAME, staff.getId());
         amountDue = 0;
         clearList();
         setTotalLabel(0);
@@ -341,7 +341,7 @@ public class GUI extends javax.swing.JFrame implements GUIInterface {
     }
 
     private void checkRestrictions(Product p) throws IOException, SQLException, CategoryNotFoundException, RestrictionException {
-        Category c = p.getCategory();
+        final Category c = sc.getCategory(p.getCategory());
         if (c.isTimeRestrict()) {
             try {
                 Calendar now = Calendar.getInstance();
@@ -1177,12 +1177,12 @@ public class GUI extends javax.swing.JFrame implements GUIInterface {
     }//GEN-LAST:event_btnCustomValueActionPerformed
 
     private void btnAddCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCustomerActionPerformed
-        if (sale.getCustomer() == null) {
+        if (sale.getCustomer() == 0) {
             int customerID = (int) NumberEntry.showNumberEntryDialog(this, "Enter Customer ID");
             if (customerID > 0) {
                 try {
                     Customer c = sc.getCustomer(customerID);
-                    sale.setCustomer(c);
+                    sale.setCustomer(c.getId());
                     lblCustomer.setText("Customer: " + c.getName());
                     btnAddCustomer.setText("Remove Customer");
                     btnAddCustomer.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
@@ -1192,7 +1192,7 @@ public class GUI extends javax.swing.JFrame implements GUIInterface {
                 }
             }
         } else {
-            sale.setCustomer(null);
+            sale.setCustomer(0);
             btnAddCustomer.setText("Add Customer");
             btnAddCustomer.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
             lblCustomer.setText("No Customer");
