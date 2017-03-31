@@ -116,14 +116,25 @@ public class GUI extends javax.swing.JFrame implements GUIInterface {
     private void updateList() {
         model.setRowCount(0);
         for (SaleItem item : sale.getSaleItems()) {
-            DecimalFormat df;
-            if (item.getPrice().compareTo(BigDecimal.ZERO) > 1) {
-                df = new DecimalFormat("#.00");
-            } else {
-                df = new DecimalFormat("0.00");
+            try {
+                DecimalFormat df;
+                if (item.getPrice().compareTo(BigDecimal.ZERO) > 1) {
+                    df = new DecimalFormat("#.00");
+                } else {
+                    df = new DecimalFormat("0.00");
+                }
+                Object[] s;
+                if (item.getType() == SaleItem.PRODUCT) {
+                    final Product p = sc.getProduct(item.getItem());
+                    s = new Object[]{item.getQuantity(), p.getName(), df.format(item.getPrice().doubleValue())};
+                } else {
+                    final Discount d = sc.getDiscount(item.getItem());
+                    s = new Object[]{item.getQuantity(), d.getName(), df.format(item.getPrice().doubleValue())};
+                }
+                model.addRow(s);
+            } catch (IOException | ProductNotFoundException | SQLException | DiscountNotFoundException ex) {
+                Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
             }
-            Object[] s = new Object[]{item.getQuantity(), item.getItem().getName(), df.format(item.getPrice().doubleValue())};
-            model.addRow(s);
         }
         quantity = 1;
         btnQuantity.setText("Quantity: 1");
@@ -329,7 +340,7 @@ public class GUI extends javax.swing.JFrame implements GUIInterface {
         if (amountDue <= 0) {
             for (SaleItem item : sale.getSaleItems()) {
                 try {
-                    sc.purchaseProduct((Product) item.getItem(), item.getQuantity());
+                    sc.purchaseProduct(item.getItem(), item.getQuantity());
                 } catch (IOException | ProductNotFoundException | SQLException | OutOfStockException ex) {
 
                 }
